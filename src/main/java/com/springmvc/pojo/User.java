@@ -2,8 +2,12 @@ package com.springmvc.pojo;
 
 import java.util.Date;
 
-public class User extends UserKey {
+public class User {
+    private Integer id;
+
     private Integer roleId;
+
+    private String loginName;
 
     private Integer gender;
 
@@ -21,12 +25,28 @@ public class User extends UserKey {
 
     private Boolean isDel;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Integer getRoleId() {
         return roleId;
     }
 
     public void setRoleId(Integer roleId) {
         this.roleId = roleId;
+    }
+
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public void setLoginName(String loginName) {
+        this.loginName = loginName == null ? null : loginName.trim();
     }
 
     public Integer getGender() {

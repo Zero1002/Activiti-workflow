@@ -36,4 +36,8 @@
 
     <!-- 使用注解的包，包括子集 -->
     <context:component-scan base-package="com.springmvc.controller" />
+
+    <!-- springMVC默认拦截所有请求，需要把所要引入的静态资源单独配置起来 -->
+    <!-- 配置静态资源 -->
+    <mvc:resources location="/resources/" mapping="/resources/**"/>
 </beans>

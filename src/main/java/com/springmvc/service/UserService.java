@@ -1,12 +1,11 @@
-package com.springmvc.dao;
+package com.springmvc.service;
 
 import com.springmvc.pojo.User;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
 
-public interface UserMapper {
+public interface UserService {
     int deleteByPrimaryKey(Integer id);
 
     int insert(User record);
@@ -19,7 +18,7 @@ public interface UserMapper {
 
     int updateByPrimaryKey(User record);
 
-    Long selectCnt(@Param(value = "params") Map<String, Object> params);
+    Long selectCnt(Map<String, Object> params);
 
-    List<User> list(@Param(value = "params") Map<String, Object> params);
+    List<User> list( Map<String, Object> params);
 }
