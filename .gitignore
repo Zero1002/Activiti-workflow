@@ -1,0 +1,9 @@
+.sass-cache
+target
+out
+node_modules
+bower_components
+.idea
+*.iml
+sftp-config.json
+generatorConfig.xml
