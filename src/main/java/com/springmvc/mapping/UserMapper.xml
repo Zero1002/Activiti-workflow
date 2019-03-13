@@ -37,9 +37,9 @@
     FROM user pr
     WHERE 1=1
     order by pr.created_at desc
-    <if test="param!= null">
-      limit #{param.offset}, #{param.size}
-    </if>
+    <!--<if test="param!= null">-->
+      <!--limit #{param.offset}, #{param.size}-->
+    <!--</if>-->
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
