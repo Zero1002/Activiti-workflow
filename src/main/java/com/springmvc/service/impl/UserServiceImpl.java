@@ -47,4 +47,10 @@ public class UserServiceImpl implements UserService {
     public List<User> list(Map<String, Object> params) {
         return userMapper.list(params);
     }
+
+    public User findUserByNamePwd(User record) {
+        return userMapper.findUserByNamePwd(record);
+    }
+
+
 }

@@ -22,4 +22,6 @@ public interface UserMapper {
     Long selectCnt(@Param(value = "params") Map<String, Object> params);
 
     List<User> list(@Param(value = "params") Map<String, Object> params);
+
+    User findUserByNamePwd(User record);
 }

@@ -21,4 +21,6 @@ public interface UserService {
     Long selectCnt(Map<String, Object> params);
 
     List<User> list( Map<String, Object> params);
+
+    User findUserByNamePwd(User record);
 }

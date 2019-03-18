@@ -18,11 +18,21 @@
     id, role_id, login_name, gender, password, email, phone, avator, created_at, updated_at, 
     is_del
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from user
     where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="findUserByNamePwd" resultMap="BaseResultMap" parameterType="com.springmvc.pojo.User" >
+    select
+    <include refid="Base_Column_List" />
+    from user
+    WHERE 1=1
+    AND login_name = #{loginName,jdbcType=VARCHAR}
+    AND password = #{password,jdbcType=VARCHAR}
   </select>
 
   <select id="selectCnt" resultType="Long">
@@ -31,6 +41,7 @@
     FROM user
     WHERE 1=1
   </select>
+
   <select id="list" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List" />

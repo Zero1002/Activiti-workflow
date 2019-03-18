@@ -15,7 +15,6 @@ public class main {
     @RequestMapping("/index")
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("name", "xxx");
         modelAndView.setViewName("views/login");
         return modelAndView;
     }

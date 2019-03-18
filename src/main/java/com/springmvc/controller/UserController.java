@@ -6,7 +6,9 @@ import com.springmvc.utils.ResponseObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -56,5 +58,25 @@ public class UserController {
     public ResponseObject<User> view(@PathVariable Integer id, HttpServletRequest req) {
         User user = userService.selectByPrimaryKey(id);
         return new ResponseObject<User>(user);
+    }
+
+    // 登陆
+    @ResponseBody
+    @RequestMapping("/login")
+    public ModelAndView login(String loginName, String password) {
+        User record = new User();
+        record.setLoginName(loginName);
+        record.setPassword(password);
+        User user = userService.findUserByNamePwd(record);
+        ModelAndView modelAndView = new ModelAndView();
+        if(user!=null){
+            modelAndView.addObject("user", user);
+            modelAndView.setViewName("views/index");
+        }else{
+            modelAndView.addObject("message", "用户名或密码错误！");
+            modelAndView.setViewName("views/login");
+        }
+
+        return modelAndView;
     }
 }
