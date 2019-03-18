@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,20 +64,32 @@ public class UserController {
     // 登陆
     @ResponseBody
     @RequestMapping("/login")
-    public ModelAndView login(String loginName, String password) {
+    public ModelAndView login(String loginName, String password, HttpServletRequest request) {
         User record = new User();
         record.setLoginName(loginName);
         record.setPassword(password);
         User user = userService.findUserByNamePwd(record);
         ModelAndView modelAndView = new ModelAndView();
-        if(user!=null){
-            modelAndView.addObject("user", user);
+        if (user != null) {
+            HttpSession session = request.getSession(true);
+            session.setAttribute("userSession", user);
             modelAndView.setViewName("views/index");
-        }else{
+        } else {
             modelAndView.addObject("message", "用户名或密码错误！");
             modelAndView.setViewName("views/login");
         }
 
+        return modelAndView;
+    }
+
+    // 退出登录
+    @ResponseBody
+    @RequestMapping("/logout")
+    public ModelAndView logout(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+        HttpSession session = request.getSession(true);
+        session.removeAttribute("userSession");
+        modelAndView.setViewName("views/login");
         return modelAndView;
     }
 }

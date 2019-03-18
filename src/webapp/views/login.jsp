@@ -31,11 +31,13 @@
                 <form id="fm" name="fm" action="<%=basePath%>/user/login" method="post" onsubmit="return check();">
                     <p>登陆</p>
                     <div class="lowin-group">
-                        <label>用户名 <a href="#" class="login-back-link">Sign in?</a></label>
+                        <label>用户名</label>
                         <input type="text" name="loginName" id="loginName" class="lowin-input">
                     </div>
                     <div class="lowin-group password-group">
-                        <label>密码 <a href="#" class="forgot-link">Forgot Password?</a></label>
+                        <label>密码</label>
+                        <input type="password" name="password" id="password" autocomplete="current-password"
+                               class="lowin-input">
                     </div>
                     <input type="submit" id="login" class="lowin-btn login-btn" value="登陆"/>
                     <%-- 错误返回 --%>
