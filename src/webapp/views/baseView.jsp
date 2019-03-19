@@ -10,7 +10,20 @@
 <%
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
-    User user = (User) session.getAttribute("userSession");
+    String userName = (String) session.getAttribute("SESSION_NAME");
+    Cookie[] cookies = request.getCookies();
+    for (int i = 0; i < cookies.length - 1; i++) {
+        Cookie cookie = cookies[i];
+        if (cookie != null && "COOKIE_NAME".equals(cookie.getName())) {
+            userName = cookie.getValue();
+        }
+    }
+    if (userName == null || userName == "") {
+%>
+<div>会话失效,请重新登陆</div>
+<%
+        return;
+    }
 %>
 
 <html>
@@ -42,6 +55,16 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <link rel="stylesheet" type="text/css"
+          href="/resources/js/jquery-easyui-1.3.3/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css"
+          href="/resources/js/jquery-easyui-1.3.3/themes/icon.css">
+    <script type="text/javascript"
+            src="/resources/js/jquery-easyui-1.3.3/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="/resources/js/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="/resources/js/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
 </head>
 <body class="fix-header fix-sidebar card-no-border">
 <!-- ============================================================== -->
@@ -97,7 +120,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href=""
                            data-toggle="dropdown" aria-haspopup="true"
-                           aria-expanded="false">欢迎您：<%=user.getLoginName()%>【角色】
+                           aria-expanded="false">欢迎您：<%=userName%>【角色】
                         </a>
                     </li>
                 </ul>
@@ -116,28 +139,39 @@
             <!-- Sidebar navigation-->
             <nav class="sidebar-nav">
                 <ul id="sidebarnav">
-                    <li><a class="waves-effect waves-dark" href="index.html" aria-expanded="false"><i
+                    <%-- 管理员才可操作 --%>
+                    <% if (userName.equals("admin")) {%>
+                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=userManagement"
+                           aria-expanded="false"><i
                             class="mdi mdi-gauge"></i><span class="hide-menu">用户管理</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="map-google.html" aria-expanded="false"><i
+                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=roleManagement"
+                           aria-expanded="false"><i
                             class="mdi mdi-earth"></i><span class="hide-menu">角色管理</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="pages-blank.html" aria-expanded="false"><i
+                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=authManagement"
+                           aria-expanded="false"><i
                             class="mdi mdi-book-open-variant"></i><span class="hide-menu">用户权限管理</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="pages-profile.html" aria-expanded="false"><i
+                    <% } %>
+                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=toDoList"
+                           aria-expanded="false"><i
                             class="mdi mdi-account-check"></i><span class="hide-menu">待办任务管理</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="table-basic.html" aria-expanded="false"><i
+                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=finishedList"
+                           aria-expanded="false"><i
                             class="mdi mdi-table"></i><span class="hide-menu">已办任务管理</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="icon-material.html" aria-expanded="false"><i
+                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=historyManagement"
+                           aria-expanded="false"><i
                             class="mdi mdi-emoticon"></i><span class="hide-menu">历史任务管理</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="pages-error-404.html" aria-expanded="false"><i
+                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=deployManagement"
+                           aria-expanded="false"><i
                             class="mdi mdi-help-circle"></i><span class="hide-menu">流程部署管理</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="pages-error-404.html" aria-expanded="false"><i
+                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=defManagement"
+                           aria-expanded="false"><i
                             class="mdi mdi-help-circle"></i><span class="hide-menu">流程定义管理</span></a>
                     </li>
                 </ul>
@@ -191,11 +225,17 @@
 <script src="/resources/js/dashboard1.js"></script>
 
 <script type="text/javascript">
+    // 退出登陆
     function logout() {
         var msg = "确认退出？";
         if (confirm(msg) == true) {
             window.location.href = '<%=basePath%>/user/logout';
         }
+    }
+
+    // 导航栏
+    function openTab(pageName) {
+        window.location.href = '<%=basePath%>/views?pageName=' + pageName;
     }
 </script>
 </body>

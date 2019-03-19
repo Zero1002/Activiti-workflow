@@ -3,6 +3,7 @@ package com.springmvc.controller;
 import com.springmvc.pojo.User;
 import com.springmvc.service.UserService;
 import com.springmvc.utils.ResponseObject;
+import com.sun.deploy.net.HttpResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,7 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +67,7 @@ public class UserController {
     // 登陆
     @ResponseBody
     @RequestMapping("/login")
-    public ModelAndView login(String loginName, String password, HttpServletRequest request) {
+    public ModelAndView login(String loginName, String password, HttpServletRequest request, HttpServletResponse response) {
         User record = new User();
         record.setLoginName(loginName);
         record.setPassword(password);
@@ -72,7 +75,13 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         if (user != null) {
             HttpSession session = request.getSession(true);
-            session.setAttribute("userSession", user);
+            // cookie
+            Cookie userCookie = new Cookie("COOKIE_NAME", loginName);
+            userCookie.setMaxAge(1 * 24 * 60 * 60); // 存活期为一天 1*24*60*60
+            userCookie.setPath("/");
+            response.addCookie(userCookie);
+            // session
+            session.setAttribute("SESSION_NAME", loginName);
             modelAndView.setViewName("views/index");
         } else {
             modelAndView.addObject("message", "用户名或密码错误！");
