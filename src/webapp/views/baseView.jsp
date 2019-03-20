@@ -11,6 +11,7 @@
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
     String userName = (String) session.getAttribute("SESSION_NAME");
+    String roleName = (String) session.getAttribute("SESSION_ROLE_NAME");
     Cookie[] cookies = request.getCookies();
     for (int i = 0; i < cookies.length - 1; i++) {
         Cookie cookie = cookies[i];
@@ -120,7 +121,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href=""
                            data-toggle="dropdown" aria-haspopup="true"
-                           aria-expanded="false">欢迎您：<%=userName%>【角色】
+                           aria-expanded="false">欢迎您：<%= userName%>【<%= roleName%>】
                         </a>
                     </li>
                 </ul>

@@ -81,7 +81,8 @@ public class UserController {
             userCookie.setPath("/");
             response.addCookie(userCookie);
             // session
-            session.setAttribute("SESSION_NAME", loginName);
+            session.setAttribute("SESSION_NAME", user.getLoginName());
+            session.setAttribute("SESSION_ROLE_NAME", user.getRoleName());
             modelAndView.setViewName("views/index");
         } else {
             modelAndView.addObject("message", "用户名或密码错误！");

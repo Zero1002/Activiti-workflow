@@ -34,8 +34,8 @@
 
   <select id="findUserByNamePwd" resultMap="BaseResultMap" parameterType="com.springmvc.pojo.User" >
     select
-    <include refid="Base_Column_List" />
-    from user
+    <include refid="Join_Column_List" />,r.role_name as roleName
+    from user pr left outer join role r on pr.role_id = r.id
     WHERE 1=1
     AND login_name = #{loginName,jdbcType=VARCHAR}
     AND password = #{password,jdbcType=VARCHAR}
