@@ -14,9 +14,15 @@
     <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
     <result column="is_del" property="isDel" jdbcType="BIT" />
   </resultMap>
+
   <sql id="Base_Column_List" >
-    id, role_id, login_name, gender, password, email, phone, avator, created_at, updated_at, 
+    id, role_id, login_name, gender, password, email, phone, avator, created_at, updated_at,
     is_del
+  </sql>
+
+  <sql id="Join_Column_List" >
+    pr.id, pr.role_id, pr.login_name, pr.gender, pr.password, pr.email, pr.phone, pr.avator, pr.created_at, pr.updated_at,
+    pr.is_del
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -44,19 +50,17 @@
 
   <select id="list" resultMap="BaseResultMap">
     SELECT
-    <include refid="Base_Column_List" />
-    FROM user pr
+    <include refid="Join_Column_List" />,r.role_name as roleName
+    FROM user pr left outer join role r on pr.role_id = r.id
     WHERE 1=1
     order by pr.created_at desc
-    <!--<if test="param!= null">-->
-      <!--limit #{param.offset}, #{param.size}-->
-    <!--</if>-->
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from user
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" parameterType="com.springmvc.pojo.User" >
     insert into user (id, role_id, login_name, 
       gender, password, email, 
@@ -67,6 +71,7 @@
       #{phone,jdbcType=VARCHAR}, #{avator,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, 
       #{updatedAt,jdbcType=TIMESTAMP}, #{isDel,jdbcType=BIT})
   </insert>
+
   <insert id="insertSelective" parameterType="com.springmvc.pojo.User" >
     insert into user
     <trim prefix="(" suffix=")" suffixOverrides="," >

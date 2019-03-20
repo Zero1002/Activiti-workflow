@@ -25,6 +25,8 @@ public class User {
 
     private Boolean isDel;
 
+    private String roleName;
+
     public Integer getId() {
         return id;
     }
@@ -111,5 +113,13 @@ public class User {
 
     public void setIsDel(Boolean isDel) {
         this.isDel = isDel;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 }

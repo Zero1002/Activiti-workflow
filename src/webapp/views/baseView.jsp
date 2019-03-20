@@ -149,10 +149,6 @@
                            aria-expanded="false"><i
                             class="mdi mdi-earth"></i><span class="hide-menu">角色管理</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=authManagement"
-                           aria-expanded="false"><i
-                            class="mdi mdi-book-open-variant"></i><span class="hide-menu">用户权限管理</span></a>
-                    </li>
                     <% } %>
                     <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=toDoList"
                            aria-expanded="false"><i
