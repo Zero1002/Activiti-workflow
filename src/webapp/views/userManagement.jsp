@@ -36,15 +36,17 @@
     <jsp:include page="./baseView.jsp"></jsp:include>
     <title>后台管理系统首页</title>
 </head>
-<body class="fix-header fix-sidebar card-no-border">
+<body onload="onload();">
 <div class="page-wrapper">
     <div class="container-fluid">
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
-                <h3 class="text-themecolor m-b-0 m-t-0">用户管理</h3>
+                <h3 class="text-themecolor m-b-0 m-t-0">
+                    用户管理
+                </h3>
             </div>
             <div class="col-md-7 col-4 align-self-center">
-                <a href="#" class="btn waves-effect waves-light btn-success pull-right hidden-sm-down">新增</a>
+                <a href="/views/userEdit.jsp" class="btn waves-effect waves-light btn-success pull-right hidden-sm-down">新增</a>
             </div>
         </div>
         <div class="row">
@@ -72,7 +74,7 @@
                                         <td><fmt:formatDate value='${item.updatedAt}'
                                                             pattern='yyyy-MM-dd HH:ss:mm'/></td>
                                         <td>
-                                            <a href="./userEdit.jsp" class="btn btn-warning">编辑</a>
+                                            <a href="<%=basePath%>/user/${item.id}" class="btn btn-warning">编辑</a>
                                             <a href="#" class="btn btn-danger">删除</a>
                                         </td>
                                     </tr>
@@ -86,6 +88,12 @@
         </div>
     </div>
 </div>
+
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+</script>
 </body>
 
 

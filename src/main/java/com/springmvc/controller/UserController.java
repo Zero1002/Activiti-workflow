@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -38,14 +39,26 @@ public class UserController {
     // 增改
     @ResponseBody
     @RequestMapping(value = "/save")
-    public ResponseObject<Boolean> save(@RequestBody User record) {
+    public ModelAndView save(User record, HttpServletRequest req) {
         int rc = 0;
         if (record.getId() != null) {
             rc = userService.updateByPrimaryKeySelective(record);
         } else {
             rc = userService.insert(record);
         }
-        return new ResponseObject<Boolean>(rc > 0);
+        String msgReturn = "";
+        if (rc > 0) {
+            msgReturn = "保存成功";
+        } else {
+            msgReturn = "保存失败";
+        }
+        Map<String, Object> params = new HashMap<String, Object>();
+        List<User> userlists = userService.list(params);
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("msgReturn", msgReturn);
+        mv.addObject("userlists",userlists);
+        mv.setViewName("views/userManagement");
+        return mv;
     }
 
     // 删除
@@ -59,9 +72,12 @@ public class UserController {
     // 查询某一个
     @ResponseBody
     @RequestMapping("/{id}")
-    public ResponseObject<User> view(@PathVariable Integer id, HttpServletRequest req) {
+    public ModelAndView view(@PathVariable Integer id, HttpServletRequest req) {
         User user = userService.selectByPrimaryKey(id);
-        return new ResponseObject<User>(user);
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("user", user);
+        mv.setViewName("views/userEdit");
+        return mv;
     }
 
     // 登陆

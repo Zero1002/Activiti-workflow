@@ -64,12 +64,10 @@
   <insert id="insert" parameterType="com.springmvc.pojo.User" >
     insert into user (id, role_id, login_name, 
       gender, password, email, 
-      phone, avator, created_at, 
-      updated_at, is_del)
+      phone, avator, is_del)
     values (#{id,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{loginName,jdbcType=VARCHAR}, 
       #{gender,jdbcType=INTEGER}, #{password,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
-      #{phone,jdbcType=VARCHAR}, #{avator,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, 
-      #{updatedAt,jdbcType=TIMESTAMP}, #{isDel,jdbcType=BIT})
+      #{phone,jdbcType=VARCHAR}, #{avator,jdbcType=VARCHAR}, #{isDel,jdbcType=BIT})
   </insert>
 
   <insert id="insertSelective" parameterType="com.springmvc.pojo.User" >
