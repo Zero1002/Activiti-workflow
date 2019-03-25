@@ -50,10 +50,10 @@ public class RoleController {
             msgReturn = "保存失败";
         }
         Map<String, Object> params = new HashMap<String, Object>();
-        List<Role> userlists = roleService.list(params);
+        List<Role> rolelists = roleService.list(params);
         ModelAndView mv = new ModelAndView();
         mv.addObject("msgReturn", msgReturn);
-        mv.addObject("rolelists", userlists);
+        mv.addObject("rolelists", rolelists);
         mv.setViewName("views/roleManagement");
         return mv;
     }

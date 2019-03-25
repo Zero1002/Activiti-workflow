@@ -51,11 +51,10 @@
                             <label class="col-sm-12">角色</label>
                             <div class="col-sm-12">
                                 <select id="roleId" name="roleId" class="form-control form-control-line">
-                                    <option value="1">管理员</option>
-                                    <option value="1">India</option>
-                                    <option value="1">Usa</option>
-                                    <option value="1">Canada</option>
-                                    <option value="1">Thailand</option>
+                                    <option value="${user.roleId}">${user.roleName}</option>
+                                    <c:forEach items="${rolelists}" var="item">
+                                        <option value="${item.id}">${item.roleName}</option>
+                                    </c:forEach>
                                 </select>
                             </div>
                         </div>

@@ -1,6 +1,8 @@
 package com.springmvc.controller;
 
+import com.springmvc.pojo.Role;
 import com.springmvc.pojo.User;
+import com.springmvc.service.RoleService;
 import com.springmvc.service.UserService;
 import com.springmvc.utils.ResponseObject;
 import com.sun.deploy.net.HttpResponse;
@@ -24,6 +26,8 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
     // 获取列表
     @ResponseBody
@@ -76,8 +80,11 @@ public class UserController {
     @RequestMapping("/{id}")
     public ModelAndView view(@PathVariable Integer id, HttpServletRequest req) {
         User user = userService.selectByPrimaryKey(id);
+        Map<String, Object> params = new HashMap<String, Object>();
+        List<Role> rolelists = roleService.list(params);
         ModelAndView mv = new ModelAndView();
         mv.addObject("user", user);
+        mv.addObject("rolelists", rolelists);
         mv.setViewName("views/userEdit");
         return mv;
     }
