@@ -44,7 +44,7 @@
                 <h3 class="text-themecolor m-b-0 m-t-0">角色管理</h3>
             </div>
             <div class="col-md-7 col-4 align-self-center">
-                <a href="#" class="btn waves-effect waves-light btn-success pull-right hidden-sm-down">新增</a>
+                <a href="/views/roleEdit.jsp" class="btn waves-effect waves-light btn-success pull-right hidden-sm-down">新增</a>
             </div>
         </div>
         <div class="row">
@@ -68,7 +68,10 @@
                                         <td>${item.id}</td>
                                         <td>${item.roleName}</td>
                                         <td><fmt:formatDate value='${item.updatedAt}' pattern='yyyy-MM-dd HH:ss:mm' /></td>
-                                        <td><a href="#" class="btn btn-warning">编辑</a> <a href="#" class="btn btn-danger">删除</a></td>
+                                        <td>
+                                            <a href="<%=basePath%>/role/${item.id}" class="btn btn-warning">编辑</a>
+                                            <a href="javascript:deleteItem(${item.id});" class="btn btn-danger">删除</a>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>
@@ -80,7 +83,24 @@
         </div>
     </div>
 </div>
-</body>
 
+<script type="text/javascript">
+    // 删除
+    function deleteItem(id) {
+        $.post("<%=basePath%>/role/delete", {
+            id: id
+        }, function (result) {
+            if (result.data) {
+                alert("删除成功");
+                location.reload();
+            } else {
+                alert("操作失败");
+            }
+        }, "json");
+    }
+</script>
+
+
+</body>
 
 </html>

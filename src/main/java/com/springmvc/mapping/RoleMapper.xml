@@ -25,6 +25,7 @@
     <include refid="Base_Column_List" />
     FROM role
     WHERE 1=1
+    AND is_del = FALSE
     order by created_at desc
   </select>
 
@@ -41,10 +42,8 @@
   </delete>
 
   <insert id="insert" parameterType="com.springmvc.pojo.Role" >
-    insert into role (id, role_name, created_at,
-      updated_at, is_del)
-    values (#{id,jdbcType=INTEGER}, #{roleName,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP},
-      #{updatedAt,jdbcType=TIMESTAMP}, #{isDel,jdbcType=BIT})
+    insert into role (id, role_name, is_del)
+    values (#{id,jdbcType=INTEGER}, #{roleName,jdbcType=VARCHAR}, #{isDel,jdbcType=BIT})
   </insert>
 
   <insert id="insertSelective" parameterType="com.springmvc.pojo.Role" >

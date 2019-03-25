@@ -75,7 +75,7 @@
                                                             pattern='yyyy-MM-dd HH:ss:mm'/></td>
                                         <td>
                                             <a href="<%=basePath%>/user/${item.id}" class="btn btn-warning">编辑</a>
-                                            <a href="#" class="btn btn-danger">删除</a>
+                                            <a href="javascript:deleteItem(${item.id});" class="btn btn-danger">删除</a>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -92,7 +92,18 @@
 <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 
 <script type="text/javascript">
-
+    function deleteItem(id) {
+        $.post("<%=basePath%>/user/delete", {
+            id: id
+        }, function (result) {
+            if (result.data) {
+                alert("删除成功");
+                location.reload();
+            } else {
+                alert("操作失败");
+            }
+        }, "json");
+    }
 </script>
 </body>
 

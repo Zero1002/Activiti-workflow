@@ -53,6 +53,7 @@
     <include refid="Join_Column_List" />,r.role_name as roleName
     FROM user pr left outer join role r on pr.role_id = r.id
     WHERE 1=1
+    AND pr.is_del = FALSE
     order by pr.created_at desc
   </select>
 

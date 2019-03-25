@@ -44,7 +44,7 @@ public class UserController {
         if (record.getId() != null) {
             rc = userService.updateByPrimaryKeySelective(record);
         } else {
-            rc = userService.insert(record);
+            rc = userService.insertSelective(record);
         }
         String msgReturn = "";
         if (rc > 0) {
@@ -63,10 +63,12 @@ public class UserController {
 
     // 删除
     @ResponseBody
-    @RequestMapping("/delete/{id}")
-    public ResponseObject<Boolean> delete(@PathVariable Integer id) {
-        int result = userService.deleteByPrimaryKey(id);
-        return new ResponseObject<Boolean>(result > 0);
+    @RequestMapping("/delete")
+    public ResponseObject<Boolean> delete(Integer id) {
+        User user = userService.selectByPrimaryKey(id);
+        user.setIsDel(true);
+        int rc = userService.updateByPrimaryKeySelective(user);
+        return new ResponseObject<Boolean>(rc > 0);
     }
 
     // 查询某一个
