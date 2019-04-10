@@ -1,4 +1,5 @@
-<%@ page import="com.springmvc.pojo.User" %><%--
+<%@ page import="com.springmvc.pojo.User" %>
+<%@ page import="static org.activiti.engine.impl.util.json.Cookie.unescape" %><%--
   Created by IntelliJ IDEA.
   User: Administrator
   Date: 2019/3/18
@@ -11,12 +12,13 @@
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
     String userName = (String) session.getAttribute("SESSION_NAME");
+    Integer roleId = (Integer) session.getAttribute("SESSION_ROLE_ID");
     String roleName = (String) session.getAttribute("SESSION_ROLE_NAME");
     Cookie[] cookies = request.getCookies();
     for (int i = 0; i < cookies.length - 1; i++) {
         Cookie cookie = cookies[i];
         if (cookie != null && "COOKIE_NAME".equals(cookie.getName())) {
-            userName = cookie.getValue();
+            userName = unescape(cookie.getValue());
         }
     }
     if (userName == null || userName == "") {
@@ -141,7 +143,7 @@
             <nav class="sidebar-nav">
                 <ul id="sidebarnav">
                     <%-- 管理员才可操作 --%>
-                    <% if (userName.equals("admin")) {%>
+                    <% if (roleId == 1) {%>
                     <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=userManagement"
                            aria-expanded="false"><i
                             class="mdi mdi-gauge"></i><span class="hide-menu">用户管理</span></a>
@@ -151,6 +153,10 @@
                             class="mdi mdi-earth"></i><span class="hide-menu">角色管理</span></a>
                     </li>
                     <% } %>
+                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=workItemManagement"
+                           aria-expanded="false"><i
+                            class="mdi mdi-account-check"></i><span class="hide-menu">项目管理</span></a>
+                    </li>
                     <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=toDoList"
                            aria-expanded="false"><i
                             class="mdi mdi-account-check"></i><span class="hide-menu">待办任务管理</span></a>

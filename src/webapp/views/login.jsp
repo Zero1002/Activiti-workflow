@@ -31,8 +31,8 @@
                 <form id="fm" name="fm" action="<%=basePath%>/user/login" method="post" onsubmit="return check();">
                     <p>登陆</p>
                     <div class="lowin-group">
-                        <label>用户名</label>
-                        <input type="text" name="loginName" id="loginName" class="lowin-input">
+                        <label>手机号</label>
+                        <input type="text" name="phone" id="phone" class="lowin-input">
                     </div>
                     <div class="lowin-group password-group">
                         <label>密码</label>

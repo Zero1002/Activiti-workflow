@@ -17,6 +17,7 @@
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
     String userName = (String) session.getAttribute("SESSION_NAME");
+    String emptyStr = "-----------";
     Cookie[] cookies = request.getCookies();
     for (int i = 0; i < cookies.length - 1; i++) {
         Cookie cookie = cookies[i];
@@ -42,10 +43,11 @@
     <div class="container-fluid">
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
-                <h3 class="text-themecolor m-b-0 m-t-0">角色管理</h3>
+                <h3 class="text-themecolor m-b-0 m-t-0">项目管理</h3>
             </div>
             <div class="col-md-7 col-4 align-self-center">
-                <a href="/views/roleEdit.jsp" class="btn waves-effect waves-light btn-success pull-right hidden-sm-down">新增</a>
+                <a href="/views/workItemEdit.jsp"
+                   class="btn waves-effect waves-light btn-success pull-right hidden-sm-down">新增</a>
             </div>
         </div>
         <div class="row">
@@ -58,19 +60,24 @@
                                 <thead>
                                 <tr>
                                     <th>id</th>
-                                    <th>角色名</th>
+                                    <th>项目名</th>
+                                    <th>状态</th>
+                                    <th>流程实例Id</th>
                                     <th>更新时间</th>
                                     <th>操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <c:forEach items="${rolelists}" var="item">
+                                <c:forEach items="${workItemList}" var="item">
                                     <tr>
                                         <td>${item.id}</td>
-                                        <td>${item.roleName}</td>
-                                        <td><fmt:formatDate value='${item.updatedAt}' pattern='yyyy-MM-dd HH:ss:mm' /></td>
+                                        <td>${item.flowName}</td>
+                                        <td>${item.state==null?"-----":item.state}</td>
+                                        <td>${item.processInstanceId==null?"-----":item.processInstanceId}</td>
+                                        <td><fmt:formatDate value='${item.updatedAt}'
+                                                            pattern='yyyy-MM-dd HH:ss:mm'/></td>
                                         <td>
-                                            <a href="<%=basePath%>/role/${item.id}" class="btn btn-warning">编辑</a>
+                                            <a href="<%=basePath%>/workItem/${item.id}" class="btn btn-warning">详情</a>
                                             <a href="javascript:deleteItem(${item.id});" class="btn btn-danger">删除</a>
                                         </td>
                                     </tr>
@@ -88,7 +95,7 @@
 <script type="text/javascript">
     // 删除
     function deleteItem(id) {
-        $.post("<%=basePath%>/role/delete", {
+        $.post("<%=basePath%>/workItem/delete", {
             id: id
         }, function (result) {
             if (result.data) {

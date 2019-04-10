@@ -1,0 +1,80 @@
+package com.springmvc.controller;
+
+import com.springmvc.pojo.WorkItem;
+import com.springmvc.service.WorkItemService;
+import com.springmvc.utils.ResponseObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/workItem")
+public class WorkItemController {
+    @Autowired
+    private WorkItemService workItemService;
+
+    // 获取列表
+    @ResponseBody
+    @RequestMapping("/list")
+    public ResponseObject<Map<String, Object>> list(HttpServletRequest request) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> aRetMap = new HashMap<String, Object>();
+        aRetMap.put("list", workItemService.list(params));
+        return new ResponseObject<Map<String, Object>>(aRetMap);
+    }
+
+    // 增改
+    @ResponseBody
+    @RequestMapping(value = "/save")
+    public ModelAndView save(WorkItem record) {
+        int rc = 0;
+        if (record.getId() != null) {
+            rc = workItemService.updateByPrimaryKeySelective(record);
+        } else {
+            rc = workItemService.insertSelective(record);
+        }
+        String msgReturn = "";
+        if (rc > 0) {
+            msgReturn = "保存成功";
+        } else {
+            msgReturn = "保存失败";
+        }
+        Map<String, Object> params = new HashMap<String, Object>();
+        List<WorkItem> rolelists = workItemService.list(params);
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("msgReturn", msgReturn);
+        mv.addObject("workItemList", rolelists);
+        mv.setViewName("views/workItemManagement");
+        return mv;
+    }
+
+    // 删除
+    @ResponseBody
+    @RequestMapping("/delete")
+    public ResponseObject<Boolean> delete(Integer id) {
+        WorkItem record = workItemService.selectByPrimaryKey(id);
+        record.setIsDel(true);
+        int rc = workItemService.updateByPrimaryKeySelective(record);
+        return new ResponseObject<Boolean>(rc > 0);
+    }
+
+    // 查询某一个
+    @ResponseBody
+    @RequestMapping("/{id}")
+    public ModelAndView view(@PathVariable Integer id, HttpServletRequest req) {
+        WorkItem record = workItemService.selectByPrimaryKey(id);
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("workItem", record);
+        mv.setViewName("views/workItemEdit");
+        return mv;
+    }
+}

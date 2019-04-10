@@ -37,7 +37,7 @@
     <include refid="Join_Column_List" />,r.role_name as roleName
     from user pr left outer join role r on pr.role_id = r.id
     WHERE 1=1
-    AND login_name = #{loginName,jdbcType=VARCHAR}
+    AND phone = #{phone,jdbcType=VARCHAR}
     AND password = #{password,jdbcType=VARCHAR}
   </select>
 

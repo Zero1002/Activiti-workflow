@@ -19,7 +19,7 @@ public class activitiCreateTable {
         RepositoryService repositoryService = processEngine.getRepositoryService();
         DeploymentBuilder builder = repositoryService.createDeployment();
         //bpmn文件的名称
-//        builder.addClasspathResource("flow/QuotationApproval.bpmn");  // 报价流程
+        builder.addClasspathResource("flow/TestFlow.bpmn");  // 测试流程
 
 
         builder.deploy();

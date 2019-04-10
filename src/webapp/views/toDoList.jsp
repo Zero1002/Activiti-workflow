@@ -1,4 +1,4 @@
-<%--
+<%@ page import="static org.activiti.engine.impl.util.json.Cookie.unescape" %><%--
   Created by IntelliJ IDEA.
   User: Administrator
   Date: 2019/3/27
@@ -13,11 +13,13 @@
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
     String userName = (String) session.getAttribute("SESSION_NAME");
+    Integer userId = (Integer) session.getAttribute("SESSION_ID");
+    Integer roleId = (Integer) session.getAttribute("SESSION_ROLE_ID");
     Cookie[] cookies = request.getCookies();
     for (int i = 0; i < cookies.length - 1; i++) {
         Cookie cookie = cookies[i];
         if (cookie != null && "COOKIE_NAME".equals(cookie.getName())) {
-            userName = cookie.getValue();
+            userName = unescape(cookie.getValue());
         }
     }
     if (userName == null || userName == "") {
@@ -33,7 +35,7 @@
     <jsp:include page="./baseView.jsp"></jsp:include>
     <title>后台管理系统首页</title>
 </head>
-<body onload="onload();">
+<body onload="taskList();">
 <div class="page-wrapper">
     <div class="container-fluid">
         <div class="row page-titles">
@@ -69,17 +71,18 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <c:forEach items="${}" var="item">
+                                <c:forEach items="${taskList}" var="item">
                                     <tr>
+                                        <td>${item.taskId}</td>
                                         <td>${item.id}</td>
-                                        <td>${item.loginName}</td>
-                                        <td>${item.roleName}</td>
-                                        <td><fmt:formatDate value='${item.updatedAt}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
-                                        <td>${item.id}</td>
-                                        <td>${item.id}</td>
-                                        <td>${item.id}</td>
-                                        <td>${item.id}</td>
-                                        <td>${item.id}</td>
+                                        <td>${item.taskName}</td>
+
+                                        <td>${item.preHandleName}</td>
+                                        <td>${item.currentHandleName}</td>
+                                        <td>${item.description}</td>
+                                        <td><fmt:formatDate value='${item.createTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
+                                        <td><fmt:formatDate value='${item.endTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
+                                        <td><fmt:formatDate value='${item.expectTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
                                         <td>
                                             <a href="#" class="btn btn-warning">开始处理</a>
                                         </td>
@@ -98,6 +101,22 @@
 <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 
 <script type="text/javascript">
+    // 重载页面
+    function taskList() {
+        $.post("<%=basePath%>/task/toDoList", {
+            s_taskName: "",
+            roleId:<%=roleId%>,
+            userId:<%=userId%>,
+        }, function (result) {
+            if (result.data) {
+                ${tasklist}
+                = result.data.rows;
+                alert(result.data.rows);
+            } else {
+                alert("查询失败");
+            }
+        }, "json");
+    }
 </script>
 </body>
 

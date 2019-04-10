@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.springmvc.dao.RoleOperationMapper" >
+  <resultMap id="BaseResultMap" type="com.springmvc.pojo.RoleOperation" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="flow_name" property="flowName" jdbcType="VARCHAR" />
+    <result column="task_name" property="taskName" jdbcType="VARCHAR" />
+    <result column="operation" property="operation" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, role_id, flow_name, task_name, operation, created_at, updated_at
+  </sql>
+
+  <select id="find" parameterType="Map" resultMap="BaseResultMap">
+    SELECT * FROM role_operation
+    <where>
+      <if test="flowName!=null and flowName!=''">
+        and flow_name = #{flowName}
+      </if>
+      <if test="roleId!=null and roleId!=''">
+        and role_id = #{roleId}
+      </if>
+      <if test="taskName!=null and taskName!=''">
+        and task_name = #{taskName}
+      </if>
+      and archive = 0
+    </where>
+  </select>
+
+  <select id="getTotal" parameterType="Map" resultType="Long">
+    SELECT COUNT(*) from role_operation
+    <where>
+      <if test="roleName!=null and roleName!=''">
+        and role_id = #{roleId}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from role_operation
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from role_operation
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.springmvc.pojo.RoleOperation" >
+    insert into role_operation (id, role_id, flow_name, 
+      task_name, operation, created_at, 
+      updated_at)
+    values (#{id,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{flowName,jdbcType=VARCHAR}, 
+      #{taskName,jdbcType=VARCHAR}, #{operation,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, 
+      #{updatedAt,jdbcType=TIMESTAMP})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.springmvc.pojo.RoleOperation" >
+    insert into role_operation
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="roleId != null" >
+        role_id,
+      </if>
+      <if test="flowName != null" >
+        flow_name,
+      </if>
+      <if test="taskName != null" >
+        task_name,
+      </if>
+      <if test="operation != null" >
+        operation,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+      <if test="updatedAt != null" >
+        updated_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="flowName != null" >
+        #{flowName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskName != null" >
+        #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="operation != null" >
+        #{operation,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null" >
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.springmvc.pojo.RoleOperation" >
+    update role_operation
+    <set >
+      <if test="roleId != null" >
+        role_id = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="flowName != null" >
+        flow_name = #{flowName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskName != null" >
+        task_name = #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="operation != null" >
+        operation = #{operation,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null" >
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.springmvc.pojo.RoleOperation" >
+    update role_operation
+    set role_id = #{roleId,jdbcType=INTEGER},
+      flow_name = #{flowName,jdbcType=VARCHAR},
+      task_name = #{taskName,jdbcType=VARCHAR},
+      operation = #{operation,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

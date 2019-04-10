@@ -17,9 +17,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static sun.text.normalizer.Utility.escape;
 
 @Controller
 @RequestMapping("/user")
@@ -60,7 +64,7 @@ public class UserController {
         List<User> userlists = userService.list(params);
         ModelAndView mv = new ModelAndView();
         mv.addObject("msgReturn", msgReturn);
-        mv.addObject("userlists",userlists);
+        mv.addObject("userlists", userlists);
         mv.setViewName("views/userManagement");
         return mv;
     }
@@ -92,21 +96,23 @@ public class UserController {
     // 登陆
     @ResponseBody
     @RequestMapping("/login")
-    public ModelAndView login(String loginName, String password, HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView login(String phone, String password, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         User record = new User();
-        record.setLoginName(loginName);
+        record.setPhone(phone);
         record.setPassword(password);
         User user = userService.findUserByNamePwd(record);
         ModelAndView modelAndView = new ModelAndView();
         if (user != null) {
             HttpSession session = request.getSession(true);
-            // cookie
-            Cookie userCookie = new Cookie("COOKIE_NAME", loginName);
+            // cookie(不可使用中文名),escape方法的作用是进行编码，主要防止value中有特殊字符
+            Cookie userCookie = new Cookie("COOKIE_NAME", escape(user.getLoginName()));
             userCookie.setMaxAge(1 * 24 * 60 * 60); // 存活期为一天 1*24*60*60
             userCookie.setPath("/");
             response.addCookie(userCookie);
             // session
+            session.setAttribute("SESSION_ID", user.getId());
             session.setAttribute("SESSION_NAME", user.getLoginName());
+            session.setAttribute("SESSION_ROLE_ID", user.getRoleId());
             session.setAttribute("SESSION_ROLE_NAME", user.getRoleName());
             modelAndView.setViewName("views/index");
         } else {

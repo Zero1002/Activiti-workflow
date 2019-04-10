@@ -1,4 +1,4 @@
-<%--
+<%@ page import="static org.activiti.engine.impl.util.json.Cookie.unescape" %><%--
   Created by IntelliJ IDEA.
   User: Administrator
   Date: 2019/3/27
@@ -17,7 +17,7 @@
     for (int i = 0; i < cookies.length - 1; i++) {
         Cookie cookie = cookies[i];
         if (cookie != null && "COOKIE_NAME".equals(cookie.getName())) {
-            userName = cookie.getValue();
+            userName = unescape(cookie.getValue());
         }
     }
     if (userName == null || userName == "") {
