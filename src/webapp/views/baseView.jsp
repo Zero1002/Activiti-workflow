@@ -1,5 +1,6 @@
 <%@ page import="com.springmvc.pojo.User" %>
-<%@ page import="static org.activiti.engine.impl.util.json.Cookie.unescape" %><%--
+<%@ page import="static org.activiti.engine.impl.util.json.Cookie.unescape" %>
+<%@ page import="java.net.URLDecoder" %><%--
   Created by IntelliJ IDEA.
   User: Administrator
   Date: 2019/3/18
@@ -15,10 +16,10 @@
     Integer roleId = (Integer) session.getAttribute("SESSION_ROLE_ID");
     String roleName = (String) session.getAttribute("SESSION_ROLE_NAME");
     Cookie[] cookies = request.getCookies();
-    for (int i = 0; i < cookies.length - 1; i++) {
+    for (int i = 0; i < cookies.length; i++) {
         Cookie cookie = cookies[i];
         if (cookie != null && "COOKIE_NAME".equals(cookie.getName())) {
-            userName = unescape(cookie.getValue());
+            userName = URLDecoder.decode(cookie.getValue(), "utf-8");
         }
     }
     if (userName == null || userName == "") {

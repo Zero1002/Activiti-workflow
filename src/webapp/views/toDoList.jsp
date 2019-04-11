@@ -12,22 +12,8 @@
 <%
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
-    String userName = (String) session.getAttribute("SESSION_NAME");
     Integer userId = (Integer) session.getAttribute("SESSION_ID");
     Integer roleId = (Integer) session.getAttribute("SESSION_ROLE_ID");
-    Cookie[] cookies = request.getCookies();
-    for (int i = 0; i < cookies.length - 1; i++) {
-        Cookie cookie = cookies[i];
-        if (cookie != null && "COOKIE_NAME".equals(cookie.getName())) {
-            userName = unescape(cookie.getValue());
-        }
-    }
-    if (userName == null || userName == "") {
-%>
-<div>会话失效,请重新登陆</div>
-<%
-        return;
-    }
 %>
 
 <html>

@@ -69,7 +69,9 @@
                             </div>
                         </div>
                     </form>
-                    <a href="javascript:start();" class="btn btn-danger">启动流程</a>
+                    <c:if test="${workItem.id>0&&workItem.state==null}">
+                        <a href="javascript:start();" class="btn btn-danger">启动流程</a>
+                    </c:if>
                 </div>
             </div>
         </div>
@@ -86,10 +88,11 @@
                 operation: '提交',
                 comment: '测试流程提交，后续提交评论'
             }, function (result) {
-                if (result.data) {
+                debugger;
+                if (result.data.success) {
                     alert("启动流程成功");
                 } else {
-                    alert("操作失败");
+                    alert(result.data.errorMsg);
                 }
             }, "json");
         } else {

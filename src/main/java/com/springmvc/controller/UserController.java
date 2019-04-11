@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,8 +105,8 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         if (user != null) {
             HttpSession session = request.getSession(true);
-            // cookie(不可使用中文名),escape方法的作用是进行编码，主要防止value中有特殊字符
-            Cookie userCookie = new Cookie("COOKIE_NAME", escape(user.getLoginName()));
+            // cookie(不可使用中文名),进行编码，主要防止value中有特殊字符
+            Cookie userCookie = new Cookie("COOKIE_NAME", URLEncoder.encode(user.getLoginName(), "utf-8"));
             userCookie.setMaxAge(1 * 24 * 60 * 60); // 存活期为一天 1*24*60*60
             userCookie.setPath("/");
             response.addCookie(userCookie);

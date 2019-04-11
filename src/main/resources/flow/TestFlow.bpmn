@@ -8,7 +8,7 @@
     <userTask activiti:candidateUsers="${flowStarter}" activiti:exclusive="true" id="成功_6" name="成功"/>
     <sequenceFlow id="_7" sourceRef="开始_2" targetRef="表单填写_3"/>
     <sequenceFlow id="_8" sourceRef="表单填写_3" targetRef="_4">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operation='提交'}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${operation=='提交'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="_9" sourceRef="_4" targetRef="异常_5">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isSuccess==false}]]></conditionExpression>
@@ -70,15 +70,15 @@
           <omgdc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="_5" id="BPMNEdge__5" sourceElement="异常_5" targetElement="_2">
-        <omgdi:waypoint x="490.0" y="182.5"/>
+      <bpmndi:BPMNEdge bpmnElement="_5" id="BPMNEdge__5" sourceElement="异常_5" targetElement="已处理_2">
+        <omgdi:waypoint x="475.0" y="182.5"/>
         <omgdi:waypoint x="550.0" y="257.5"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_6" id="BPMNEdge__6" sourceElement="成功_6" targetElement="_2">
-        <omgdi:waypoint x="490.0" y="342.5"/>
+      <bpmndi:BPMNEdge bpmnElement="_6" id="BPMNEdge__6" sourceElement="成功_6" targetElement="已处理_2">
+        <omgdi:waypoint x="475.0" y="342.5"/>
         <omgdi:waypoint x="550.0" y="257.5"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
@@ -105,8 +105,8 @@
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_11" id="BPMNEdge__11" sourceElement="_2" targetElement="_3">
-        <omgdi:waypoint x="650.0" y="257.5"/>
+      <bpmndi:BPMNEdge bpmnElement="_11" id="BPMNEdge__11" sourceElement="已处理_2" targetElement="结束_3">
+        <omgdi:waypoint x="635.0" y="257.5"/>
         <omgdi:waypoint x="740.0" y="256.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
