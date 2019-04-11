@@ -1,4 +1,5 @@
-<%@ page import="static org.activiti.engine.impl.util.json.Cookie.unescape" %><%--
+<%@ page import="static org.activiti.engine.impl.util.json.Cookie.unescape" %>
+<%--
   Created by IntelliJ IDEA.
   User: Administrator
   Date: 2019/3/27
@@ -21,7 +22,7 @@
     <jsp:include page="./baseView.jsp"></jsp:include>
     <title>后台管理系统首页</title>
 </head>
-<body onload="taskList();">
+<body class="fix-header fix-sidebar card-no-border">
 <div class="page-wrapper">
     <div class="container-fluid">
         <div class="row page-titles">
@@ -41,19 +42,19 @@
                 <div class="card">
                     <div class="card-block">
                         <div class="table-responsive">
-                            <table id="table" class="table">
+                            <table id="table" class="table" style="text-align:center">
                                 <thead>
                                 <tr>
-                                    <th>taskId</th>
-                                    <th>项目id</th>
-                                    <th>任务名称</th>
-                                    <th>前点处理人</th>
-                                    <th>现应处理人</th>
-                                    <th>描述</th>
-                                    <th>创建时间</th>
-                                    <th>结束时间</th>
-                                    <th>预计处理时间</th>
-                                    <th>操作</th>
+                                    <th style="white-space: nowrap;text-align:center">taskId</th>
+                                    <th style="white-space: nowrap;text-align:center">项目id</th>
+                                    <th style="white-space: nowrap;text-align:center">节点名称</th>
+                                    <th style="white-space: nowrap;text-align:center">前点处理人</th>
+                                    <th style="white-space: nowrap;text-align:center">现应处理人</th>
+                                    <th style="white-space: nowrap;text-align:center">描述</th>
+                                    <th style="white-space: nowrap;text-align:center">创建时间</th>
+                                    <th style="white-space: nowrap;text-align:center">预计时间</th>
+                                    <th style="white-space: nowrap;text-align:center">结束时间</th>
+                                    <th style="white-space: nowrap;text-align:center">操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -62,13 +63,15 @@
                                         <td>${item.taskId}</td>
                                         <td>${item.id}</td>
                                         <td>${item.taskName}</td>
-
                                         <td>${item.preHandleName}</td>
                                         <td>${item.currentHandleName}</td>
                                         <td>${item.description}</td>
-                                        <td><fmt:formatDate value='${item.createTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
+                                        <td><fmt:formatDate value='${item.createTime}'
+                                                            pattern='yyyy-MM-dd HH:ss:mm'/></td>
+                                        <td><fmt:formatDate value='${item.expectTime}'
+                                                            pattern='yyyy-MM-dd HH:ss:mm'/></td>
                                         <td><fmt:formatDate value='${item.endTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
-                                        <td><fmt:formatDate value='${item.expectTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
+
                                         <td>
                                             <a href="#" class="btn btn-warning">开始处理</a>
                                         </td>
@@ -84,19 +87,15 @@
     </div>
 </div>
 
-<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-
 <script type="text/javascript">
     // 重载页面
     function taskList() {
         $.post("<%=basePath%>/task/toDoList", {
             s_taskName: "",
             roleId:<%=roleId%>,
-            userId:<%=userId%>,
+            userId:<%=userId%>
         }, function (result) {
             if (result.data) {
-                ${tasklist}
-                = result.data.rows;
                 alert(result.data.rows);
             } else {
                 alert("查询失败");

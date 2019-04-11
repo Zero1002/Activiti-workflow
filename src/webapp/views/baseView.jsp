@@ -12,6 +12,7 @@
 <%
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
+    Integer userId = (Integer) session.getAttribute("SESSION_ID");
     String userName = (String) session.getAttribute("SESSION_NAME");
     Integer roleId = (Integer) session.getAttribute("SESSION_ROLE_ID");
     String roleName = (String) session.getAttribute("SESSION_ROLE_NAME");
@@ -158,7 +159,8 @@
                            aria-expanded="false"><i
                             class="mdi mdi-account-check"></i><span class="hide-menu">项目管理</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=toDoList"
+                    <li><a class="waves-effect waves-dark"
+                           href="<%=basePath%>/task/toDoList?roleId=<%=roleId%>&userId=<%=userId%>"
                            aria-expanded="false"><i
                             class="mdi mdi-account-check"></i><span class="hide-menu">待办任务管理</span></a>
                     </li>

@@ -129,6 +129,7 @@ public class TaskController {
                 t.setProcessInstanceId(processInstanceId);
                 // 获取单号
                 Integer id = (Integer) taskService.getVariable(task.getId(), "id");
+                t.setId(String.valueOf(id));
                 WorkItem workItem = workItemService.selectByPrimaryKey(id);
 
                 // 查询当前节点任务办理 候选组/候选人
@@ -196,7 +197,7 @@ public class TaskController {
             result.put("total", jsonArray.size());
             // 返回jsp
             modelAndView.setViewName("views/toDoList");
-            modelAndView.addObject("taskList", jsonArray);
+            modelAndView.addObject("taskList", tasks);
             return modelAndView;
         } catch (Exception e) {
             result.put("errorMsg", "待办查询失败：" + e.getMessage());

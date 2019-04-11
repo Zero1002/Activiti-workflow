@@ -1,5 +1,6 @@
 <%@ page import="com.springmvc.pojo.User" %>
-<%@ page import="static org.activiti.engine.impl.util.json.Cookie.unescape" %><%--
+<%@ page import="static org.activiti.engine.impl.util.json.Cookie.unescape" %>
+<%--
   Created by IntelliJ IDEA.
   User: Administrator
   Date: 2019/3/18
@@ -23,7 +24,7 @@
     <jsp:include page="./baseView.jsp"></jsp:include>
     <title>后台管理系统首页</title>
 </head>
-<body onload="onload();">
+<body class="fix-header fix-sidebar card-no-border">
 <div class="page-wrapper">
     <div class="container-fluid">
         <div class="row page-titles">
@@ -76,7 +77,6 @@
     </div>
 </div>
 
-<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 
 <script type="text/javascript">
     function deleteItem(id) {

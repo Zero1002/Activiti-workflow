@@ -88,7 +88,6 @@
                 operation: '提交',
                 comment: '测试流程提交，后续提交评论'
             }, function (result) {
-                debugger;
                 if (result.data.success) {
                     alert("启动流程成功");
                 } else {

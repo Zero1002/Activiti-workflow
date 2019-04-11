@@ -18,23 +18,13 @@
     <title>编辑</title>
 </head>
 <body>
+
 <div class="page-wrapper">
-    <!-- ============================================================== -->
-    <!-- Container fluid  -->
-    <!-- ============================================================== -->
     <div class="container-fluid">
-        <!-- ============================================================== -->
-        <!-- Bread crumb and right sidebar toggle -->
-        <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
                 <h3 class="text-themecolor m-b-0 m-t-0">用户编辑</h3>
             </div>
-            <%-- 按钮 --%>
-            <%--<div class="col-md-7 col-4 align-self-center">--%>
-            <%--<a href="#" class="btn waves-effect waves-light btn-danger pull-right hidden-sm-down"> Upgrade to--%>
-            <%--Pro</a>--%>
-            <%--</div>--%>
         </div>
         <div class="col-lg-8 col-xlg-9 col-md-7">
             <div class="card">

@@ -65,6 +65,11 @@ public class MainController {
             List<WorkItem> workItemList = workItemService.list(params);
             modelAndView.addObject("workItemList",workItemList);
         }
+        // 待办
+        if (pageName.equals("toDoList")) {
+            List<WorkItem> workItemList = workItemService.list(params);
+            modelAndView.addObject("workItemList",workItemList);
+        }
         return modelAndView;
     }
 }
