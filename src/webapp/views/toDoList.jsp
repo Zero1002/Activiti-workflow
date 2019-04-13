@@ -15,6 +15,7 @@
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
     Integer userId = (Integer) session.getAttribute("SESSION_ID");
     Integer roleId = (Integer) session.getAttribute("SESSION_ROLE_ID");
+    Boolean isShow = false;
 %>
 
 <html>
@@ -31,23 +32,23 @@
                     待办任务管理
                 </h3>
             </div>
-            <div class="col-md-7 col-4 align-self-center">
-                <a href="#"
-                   class="btn waves-effect waves-light btn-success pull-right hidden-sm-down">没想好干嘛的按钮</a>
-            </div>
+            <%--<div class="col-md-7 col-4 align-self-center">--%>
+            <%--<a href="#"--%>
+            <%--class="btn waves-effect waves-light btn-success pull-right hidden-sm-down">没想好干嘛的按钮</a>--%>
+            <%--</div>--%>
         </div>
         <div class="row">
             <!-- column -->
-            <div class="col-lg-12">
+            <div id="taskListCard" class="col-lg-12">
                 <div class="card">
                     <div class="card-block">
                         <div class="table-responsive">
                             <table id="table" class="table" style="text-align:center">
                                 <thead>
                                 <tr>
-                                    <th style="white-space: nowrap;text-align:center">taskId</th>
+                                    <th style="white-space: nowrap;text-align:center">任务Id</th>
                                     <th style="white-space: nowrap;text-align:center">项目id</th>
-                                    <th style="white-space: nowrap;text-align:center">节点名称</th>
+                                    <th style="white-space: nowrap;text-align:center">项目状态</th>
                                     <th style="white-space: nowrap;text-align:center">前点处理人</th>
                                     <th style="white-space: nowrap;text-align:center">现应处理人</th>
                                     <th style="white-space: nowrap;text-align:center">描述</th>
@@ -61,7 +62,7 @@
                                 <c:forEach items="${taskList}" var="item">
                                     <tr>
                                         <td>${item.taskId}</td>
-                                        <td>${item.id}</td>
+                                        <td><a href="<%=basePath%>/workItem/${item.id}">${item.id}</a></td>
                                         <td>${item.taskName}</td>
                                         <td>${item.preHandleName}</td>
                                         <td>${item.currentHandleName}</td>
@@ -73,16 +74,55 @@
                                         <td><fmt:formatDate value='${item.endTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
 
                                         <td>
-                                            <a href="#" class="btn btn-warning">开始处理</a>
+                                            <a href="javascript:showHandel(${item.taskId});" class="btn btn-warning">开始处理</a>
+                                            <a href="#" class="btn btn-success">查看流程图</a>
                                         </td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                 </div>
             </div>
+            <%--  右侧小卡片 --%>
+            <div id="taskHandleCard" class="col-lg-4 col-xlg-3 col-md-5" style="display: none;">
+                <div class="card">
+                    <div class="card-block">
+                        <div class="form-group">
+                            <label class="col-md-12">任务Id</label>
+                            <div class="col-md-12">
+                                <input id="taskId" name="taskId" type="text" value=""
+                                       class="form-control form-control-line" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12">批注</label>
+                            <div class="col-md-12">
+                                <input id="comment" name="comment" type="text" value=""
+                                       class="form-control form-control-line">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-12">操作</label>
+                            <div class="col-md-12">
+                                <div style="display: inline-flex">
+                                    <a href="javascript:showHandel();" class="btn btn-info" style="margin:8px">关闭</a>
+                                    <a href="#" class="btn btn-info" style="margin:8px">指定其他审批人</a>
+                                </div>
+                                <div style="display: inline-flex">
+                                    <%--TODO: 审批操作灵活化--%>
+                                    <a href="javascript:taskHandle();" class="btn btn-success" style="margin:8px">通过</a>
+                                    <a href="#" class="btn btn-warning" style="margin:8px">驳回</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -101,6 +141,42 @@
                 alert("查询失败");
             }
         }, "json");
+    }
+
+    var isShow = false;
+
+    function showHandel($taskId) {
+        isShow = !isShow;
+        if (isShow) {
+            document.getElementById("taskListCard").className = "col-lg-8 col-xlg-9 col-md-7";
+            document.getElementById("taskHandleCard").style.display = "";
+            $('#taskId').val($taskId);
+        } else {
+            document.getElementById("taskListCard").className = "col-lg-12";
+            document.getElementById("taskHandleCard").style.display = "none";
+        }
+
+    }
+
+    function taskHandle() {
+        var taskId = $('#taskId').val();
+        var comment = $('#comment').val();
+        var operation = '处理';
+        var isConfirm = confirm("确定当前操作吗");
+        if (isConfirm) {
+            $.post("<%=basePath%>/testFlow/handle", {
+                taskId: taskId,
+                userId:<%=userId%>,
+                operation: operation,
+                comment: comment
+            }, function (result) {
+                if (result.data.success) {
+                    alert(operation + "成功");
+                } else {
+                    alert(result.data.errorMsg);
+                }
+            }, "json");
+        }
     }
 </script>
 </body>

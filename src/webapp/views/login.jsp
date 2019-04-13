@@ -29,14 +29,15 @@
             <div class="lowin-box-inner">
 
                 <form id="fm" name="fm" action="<%=basePath%>/user/login" method="post" onsubmit="return check();">
-                    <p>登陆</p>
+                    <p style="font-size:32px;">登陆</p>
                     <div class="lowin-group">
                         <label>手机号</label>
-                        <input type="text" name="phone" id="phone" class="lowin-input">
+                        <input style="color: dimgray;" type="text" name="phone" id="phone" class="lowin-input">
                     </div>
                     <div class="lowin-group password-group">
                         <label>密码</label>
-                        <input type="password" name="password" id="password" autocomplete="current-password"
+                        <input style="color: dimgray;" type="password" name="password" id="password"
+                               autocomplete="current-password"
                                class="lowin-input">
                     </div>
                     <input type="submit" id="login" class="lowin-btn login-btn" value="登陆"/>

@@ -17,11 +17,14 @@ import org.activiti.engine.task.Task;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -204,6 +207,28 @@ public class TaskController {
             result.put("success", false);
         }
         return modelAndView;
+    }
+
+    // 查询任务详情
+    @ResponseBody
+    @RequestMapping("/taskDetail")
+    public ModelAndView view(Integer id, String taskId, HttpServletRequest req) {
+        WorkItem record = workItemService.selectByPrimaryKey(id);
+        record.getExtraInfo();
+        ModelAndView mv = new ModelAndView();
+        try {
+            // 读取blob格式并转化成json对象
+            String extraInfo = new String(record.getExtraInfo(), "GB2312");
+            JSONObject extraInfoJson = JSONObject.fromObject(extraInfo);
+            mv.addObject("extraInfoJson", extraInfoJson);
+            mv.addObject("workItem", record);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+        mv.addObject("task", task);
+        mv.setViewName("views/task_handle");
+        return mv;
     }
 
     /**

@@ -17,7 +17,7 @@
 <html>
 <head>
     <jsp:include page="./baseView.jsp"></jsp:include>
-    <title>编辑</title>
+    <title>流程审批</title>
 </head>
 <body>
 <div class="page-wrapper">
@@ -30,7 +30,7 @@
         <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
-                <h3 class="text-themecolor m-b-0 m-t-0">项目详情</h3>
+                <h3 class="text-themecolor m-b-0 m-t-0">任务详情</h3>
             </div>
             <%-- 按钮 --%>
             <%--<div class="col-md-7 col-4 align-self-center">--%>
@@ -38,45 +38,27 @@
             <%--Pro</a>--%>
             <%--</div>--%>
         </div>
-        <div class="col-lg-8 col-xlg-9 col-md-7">
-            <div class="card">
-                <div class="card-block">
-                    <form class="form-horizontal form-material" method="post" action="<%=basePath%>/workItem/save">
-                        <div class="form-group">
-                            <label class="col-md-12">Id</label>
-                            <div class="col-md-12">
-                                <input id="id" name="id" type="text" value="${workItem.id}"
-                                       class="form-control form-control-line" readonly>
+        <div class="row">
+            <div class="col-lg-4 col-xlg-3 col-md-5">
+                <div class="card">
+                    <div class="card-block">
+                        <form class="form-horizontal form-material" method="post" action="<%=basePath%>/workItem/save">
+                            <div class="form-group">
+                                <label class="col-md-12">项目Id</label>
+                                <div class="col-md-12">
+                                    <input id="id" name="id" type="text" value="${workItem.id}"
+                                           class="form-control form-control-line" readonly>
+                                </div>
                             </div>
-                        </div>
-                        <%--TODO:数组库字段没有流程key的字段--%>
-                        <div class="form-group">
-                            <label class="col-sm-12">所属流程</label>
-                            <div class="col-sm-12">
-                                <select id="flowKey" name="roleId" class="form-control form-control-line">
-                                    <option value="TestFlow">TestFlow</option>
-                                    <option value="ceshi">测试</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-12">项目名</label>
-                            <div class="col-md-12">
-                                <input id="flowName" name="flowName" type="text" value="${workItem.flowName}"
-                                       class="form-control form-control-line">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-12">其余信息</label>
-                            <c:if test="${workItem.id==null}">
-                                <div class="col-md-12" style="display: inline-flex">
-                                    <input type="text" value="" style="width: 30%;margin-left: 32px;" placeholder="Key"
-                                           class="form-control form-control-line">
-                                    <input type="text" value="" style="margin-left: 16px;" placeholder="Value"
+                            <div class="form-group">
+                                <label class="col-md-12">项目名</label>
+                                <div class="col-md-12">
+                                    <input id="flowName" name="flowName" type="text" value="${workItem.flowName}"
                                            class="form-control form-control-line">
                                 </div>
-                            </c:if>
-                            <c:if test="${workItem.id>0}">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">其余信息</label>
                                 <c:forEach items="${extraInfoJson}" var="item">
                                     <div class="col-md-12" style="display: inline-flex">
                                         <input type="text" value="${item.key}" style="width: 30%;margin-left: 32px;"
@@ -85,22 +67,41 @@
                                                class="form-control form-control-line">
                                     </div>
                                 </c:forEach>
-                            </c:if>
-
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-12">
-                                <input type="submit" class="btn btn-success"/>
                             </div>
-                        </div>
-
-                    </form>
-                    <c:if test="${workItem.id>0&&workItem.state==null}">
-                        <%-- TODO:选择框指定哪个流程启动--%>
-                        <a href="javascript:start();" class="btn btn-danger">启动流程</a>
-                    </c:if>
+                        </form>
+                    </div>
                 </div>
             </div>
+            <%--  右侧小卡片 --%>
+            <div class="col-lg-8 col-xlg-9 col-md-7">
+                <div class="card">
+                    <div class="card-block">
+                        <table id="table" class="table" style="text-align:center">
+                            <thead>
+                            <tr>
+                                <th style="white-space: nowrap;text-align:center">taskId</th>
+                                <th style="white-space: nowrap;text-align:center">节点名称</th>
+                                <th style="white-space: nowrap;text-align:center">描述</th>
+                                <th style="white-space: nowrap;text-align:center">创建时间</th>
+                                <th style="white-space: nowrap;text-align:center">预计时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>${task.id}</td>
+                                <td>${task.name}</td>
+                                <td>${task.description}</td>
+                                <td><fmt:formatDate value='${task.createTime}'
+                                                    pattern='yyyy-MM-dd HH:ss:mm'/></td>
+                                <td><fmt:formatDate value='${task.dueDate}'
+                                                    pattern='yyyy-MM-dd HH:ss:mm'/></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -113,7 +114,7 @@
                 id: ${workItem.id},
                 userId:<%=userId%>,
                 operation: '提交',
-                comment: '流程启动'
+                comment: '测试流程提交，后续提交评论'
             }, function (result) {
                 if (result.data.success) {
                     alert("启动流程成功");

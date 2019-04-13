@@ -1,8 +1,11 @@
 package com.springmvc.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.springmvc.pojo.WorkItem;
 import com.springmvc.service.WorkItemService;
 import com.springmvc.utils.ResponseObject;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +76,16 @@ public class WorkItemController {
     @RequestMapping("/{id}")
     public ModelAndView view(@PathVariable Integer id, HttpServletRequest req) {
         WorkItem record = workItemService.selectByPrimaryKey(id);
+        record.getExtraInfo();
         ModelAndView mv = new ModelAndView();
+        try {
+            // 读取blob格式并转化成json对象
+            String extraInfo = new String(record.getExtraInfo(), "GB2312");
+            JSONObject extraInfoJson = JSONObject.fromObject(extraInfo);
+            mv.addObject("extraInfoJson", extraInfoJson);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         mv.addObject("workItem", record);
         mv.setViewName("views/workItemEdit");
         return mv;
