@@ -164,7 +164,8 @@
                            aria-expanded="false"><i
                             class="mdi mdi-account-check"></i><span class="hide-menu">待办任务管理</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=finishedList"
+                    <li><a class="waves-effect waves-dark"
+                           href="<%=basePath%>/task/finishedList?roleId=<%=roleId%>&userId=<%=userId%>"
                            aria-expanded="false"><i
                             class="mdi mdi-table"></i><span class="hide-menu">已办任务管理</span></a>
                     </li>

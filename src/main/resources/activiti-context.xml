@@ -25,6 +25,7 @@
         <property name="mailServerUsername" value="649314761@qq.com"/>
         <property name="mailServerPassword" value="zcfddfvsdjilbfhd"/>
         <property name="mailServerUseSSL" value="true"/>
+        <property name="history" value="full"/>
     </bean>
 
     <!-- 定义流程引擎 -->
