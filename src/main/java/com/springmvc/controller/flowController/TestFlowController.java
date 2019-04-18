@@ -63,7 +63,7 @@ public class TestFlowController {
      */
     @ResponseBody
     @RequestMapping("/start")
-    public ResponseObject<Map<String, Object>> start(Integer id, String userId, String operation, String comment,
+    public ResponseObject<Map<String, Object>> start(Integer id, String userId, String operation, String comment, String flowKey,
                                                      @RequestParam(required = false) String assignUser,
                                                      @RequestParam(required = false) String assignRole) throws Exception {
         // 结果返回
@@ -78,7 +78,7 @@ public class TestFlowController {
         // test
         variables.put("isSuccess", false);
         try {
-            ProcessInstance pi = runtimeService.startProcessInstanceByKey("TestFlow", variables);
+            ProcessInstance pi = runtimeService.startProcessInstanceByKey(flowKey, variables);
             Task task = taskService.createTaskQuery().processInstanceId(pi.getProcessInstanceId()).singleResult();
             String processInstacnId = task.getProcessInstanceId();
             Authentication.setAuthenticatedUserId(userId);
@@ -136,6 +136,7 @@ public class TestFlowController {
             }
             taskService.addComment(taskId, processInstacnId, operation + "," + comment);
             taskService.complete(taskId, variables);
+            // TODO:并行网关处理
             // 获取单号
             Integer id = (Integer) taskService.getVariable(taskId, "id");
             Task nextTask = taskService.createTaskQuery().processInstanceId(task.getProcessInstanceId()).singleResult();

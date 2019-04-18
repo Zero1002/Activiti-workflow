@@ -3,11 +3,13 @@
 <mapper namespace="com.springmvc.dao.WorkItemMapper" >
   <resultMap id="BaseResultMap" type="com.springmvc.pojo.WorkItem" >
     <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
     <result column="flow_name" property="flowName" jdbcType="VARCHAR" />
     <result column="state" property="state" jdbcType="VARCHAR" />
     <result column="process_instance_id" property="processInstanceId" jdbcType="VARCHAR" />
     <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
     <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="admin_id" property="adminId" jdbcType="INTEGER" />
     <result column="is_del" property="isDel" jdbcType="BIT" />
   </resultMap>
 
@@ -16,7 +18,7 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, flow_name, state, process_instance_id, created_at, updated_at, is_del
+    id, item_name, flow_name, state, process_instance_id, created_at, updated_at, admin_id, is_del
   </sql>
 
   <sql id="Blob_Column_List" >
@@ -49,11 +51,11 @@
   </delete>
 
   <insert id="insert" parameterType="com.springmvc.pojo.WorkItem" >
-    insert into work_item (id, flow_name, state, 
-      process_instance_id, created_at, updated_at, 
+    insert into work_item (id, item_name, flow_name, state,
+      process_instance_id, admin_id,
       is_del, extra_info)
-    values (#{id,jdbcType=INTEGER}, #{flowName,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
-      #{processInstanceId,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=INTEGER}, #{itemName,jdbcType=VARCHAR}, #{flowName,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR},
+      #{processInstanceId,jdbcType=VARCHAR},#{adminId,jdbcType=INTEGER},
       #{isDel,jdbcType=BIT}, #{extraInfo,jdbcType=LONGVARBINARY})
   </insert>
 
@@ -63,6 +65,9 @@
       <if test="id != null" >
         id,
       </if>
+      <if test="itemName != null" >
+        item_name,
+      </if>
       <if test="flowName != null" >
         flow_name,
       </if>
@@ -71,6 +76,9 @@
       </if>
       <if test="processInstanceId != null" >
         process_instance_id,
+      </if>
+      <if test="adminId != null" >
+        admin_id,
       </if>
       <if test="isDel != null" >
         is_del,
@@ -83,6 +91,9 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
+      <if test="itemName != null" >
+        #{itemName,jdbcType=VARCHAR},
+      </if>
       <if test="flowName != null" >
         #{flowName,jdbcType=VARCHAR},
       </if>
@@ -91,6 +102,9 @@
       </if>
       <if test="processInstanceId != null" >
         #{processInstanceId,jdbcType=VARCHAR},
+      </if>
+      <if test="adminId != null" >
+        #{adminId,jdbcType=INTEGER},
       </if>
       <if test="isDel != null" >
         #{isDel,jdbcType=BIT},
@@ -104,6 +118,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.springmvc.pojo.WorkItem" >
     update work_item
     <set >
+      <if test="itemName != null" >
+        item_name = #{itemName,jdbcType=VARCHAR},
+      </if>
       <if test="flowName != null" >
         flow_name = #{flowName,jdbcType=VARCHAR},
       </if>
@@ -112,6 +129,9 @@
       </if>
       <if test="processInstanceId != null" >
         process_instance_id = #{processInstanceId,jdbcType=VARCHAR},
+      </if>
+      <if test="adminId != null" >
+        admin_id = #{adminId,jdbcType=INTEGER},
       </if>
       <if test="isDel != null" >
         is_del = #{isDel,jdbcType=BIT},
@@ -125,9 +145,11 @@
 
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.springmvc.pojo.WorkItem" >
     update work_item
-    set flow_name = #{flowName,jdbcType=VARCHAR},
+    set item_name = #{itemName,jdbcType=VARCHAR},
+      flow_name = #{flowName,jdbcType=VARCHAR},
       state = #{state,jdbcType=VARCHAR},
       process_instance_id = #{processInstanceId,jdbcType=VARCHAR},
+      admin_id = #{adminId,jdbcType=INTEGER},
       is_del = #{isDel,jdbcType=BIT},
       extra_info = #{extraInfo,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=INTEGER}
@@ -135,9 +157,11 @@
 
   <update id="updateByPrimaryKey" parameterType="com.springmvc.pojo.WorkItem" >
     update work_item
-    set flow_name = #{flowName,jdbcType=VARCHAR},
+    set item_name = #{itemName,jdbcType=VARCHAR},
+      flow_name = #{flowName,jdbcType=VARCHAR},
       state = #{state,jdbcType=VARCHAR},
       process_instance_id = #{processInstanceId,jdbcType=VARCHAR},
+      admin_id = #{adminId,jdbcType=INTEGER},
       is_del = #{isDel,jdbcType=BIT}
     where id = #{id,jdbcType=INTEGER}
   </update>

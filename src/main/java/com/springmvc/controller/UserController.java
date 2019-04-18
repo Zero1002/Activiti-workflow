@@ -127,10 +127,21 @@ public class UserController {
     // 退出登录
     @ResponseBody
     @RequestMapping("/logout")
-    public ModelAndView logout(HttpServletRequest request) {
+    public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView modelAndView = new ModelAndView();
         HttpSession session = request.getSession(true);
-        session.removeAttribute("userSession");
+        session.removeAttribute("SESSION_ID");
+        session.removeAttribute("SESSION_NAME");
+        session.removeAttribute("SESSION_ROLE_ID");
+        session.removeAttribute("SESSION_ROLE_NAME");
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {                         //遍历所有Cookie
+            if (cookie.getName().equals("COOKIE_NAME")) {       //找到对应的cookie
+                cookie.setMaxAge(0);                            //Cookie并不能根本意义上删除，只需要这样设置为0即可
+                cookie.setPath("/");                            //很关键，设置成跟写入cookies一样的，全路径共享Cookie
+                response.addCookie(cookie);                     //重新响应
+            }
+        }
         modelAndView.setViewName("views/login");
         return modelAndView;
     }

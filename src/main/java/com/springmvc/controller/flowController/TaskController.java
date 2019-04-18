@@ -283,11 +283,11 @@ public class TaskController {
                     List<HistoricVariableInstance> hisVarList = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstanceId).list();
                     for (HistoricVariableInstance variable : hisVarList) {
                         // 任务id
-                        if(variable.getVariableName().equals("id")){
+                        if (variable.getVariableName().equals("id")) {
                             myTask.setId(String.valueOf(variable.getValue()));
                         }
                         // 流程发起人
-                        if(variable.getVariableName().equals("flowStarter")){
+                        if (variable.getVariableName().equals("flowStarter")) {
                             User starter = userService.selectByPrimaryKey(Integer.valueOf(String.valueOf(variable.getValue())));
                             myTask.setFlowStarter(starter.getLoginName());
                         }
@@ -380,36 +380,32 @@ public class TaskController {
      * 根据任务id及角色返回相应操作名称
      *
      * @param taskId
-     * @param roleName 多角色","拼接
      * @return
      * @throws Exception
      */
     @ResponseBody
     @RequestMapping("/listRoleWithOperations")
     public ResponseObject<Map<String, Object>>
-    listRoleWithOperations(String taskId, String roleName, String flowName) throws Exception {
+    listRoleWithOperations(String taskId, String roleId, String flowName) throws Exception {
         Map<String, Object> result = new HashMap<String, Object>();
-        if (roleName == null || roleName.equals("")) {
-            roleName = " ";
-        }
-        String[] roleNameList = StringUtils.split(roleName, ",");
+        String[] roleNameList = StringUtils.split(roleId, ",");
         String taskName = "";
         ArrayList<String> list = new ArrayList<String>();
         try {
+            String[] splitOP= new String[0];
             for (String role_name : roleNameList) {
                 Map<String, Object> map = new HashMap<String, Object>();
                 Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
                 map.put("taskName", task.getName());
                 taskName = task.getName();
                 map.put("flowName", flowName);
-                map.put("roleName", role_name);
-                List<RoleOperation> roleOperations = roleOperationService.find(map);
-                for (RoleOperation ro : roleOperations) {
-                    list.add(ro.getOperation());
-                }
+                map.put("roleId", role_name);
+                RoleOperation roleOperation = roleOperationService.find(map).get(0);
+                splitOP = roleOperation.getOperation().split(",");
+
             }
             result.put("taskName", taskName);
-            result.put("operations", list);
+            result.put("operations", splitOP);
             result.put("success", true);
             return new ResponseObject<Map<String, Object>>(result);
         } catch (Exception e) {

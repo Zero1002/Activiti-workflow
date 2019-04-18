@@ -47,9 +47,11 @@
                                 <tr>
                                     <th>id</th>
                                     <th>项目名</th>
+                                    <th>所属流程</th>
                                     <th>状态</th>
                                     <th>流程实例Id</th>
                                     <th>更新时间</th>
+                                    <th>操作人</th>
                                     <th>操作</th>
                                 </tr>
                                 </thead>
@@ -57,14 +59,17 @@
                                 <c:forEach items="${workItemList}" var="item">
                                     <tr>
                                         <td>${item.id}</td>
+                                        <td>${item.itemName}</td>
                                         <td>${item.flowName}</td>
                                         <td>${item.state==null?"-----":item.state}</td>
                                         <td>${item.processInstanceId==null?"-----":item.processInstanceId}</td>
                                         <td><fmt:formatDate value='${item.updatedAt}'
                                                             pattern='yyyy-MM-dd HH:ss:mm'/></td>
+                                        <td>${item.adminName}</td>
                                         <td>
                                             <a href="<%=basePath%>/workItem/${item.id}" class="btn btn-warning">详情</a>
                                             <a href="javascript:deleteItem(${item.id});" class="btn btn-danger">删除</a>
+                                            <a href="#" class="btn btn-info">查看流程图</a>
                                         </td>
                                     </tr>
                                 </c:forEach>

@@ -63,6 +63,10 @@ public class MainController {
         // 任务管理
         if (pageName.equals("workItemManagement")) {
             List<WorkItem> workItemList = workItemService.list(params);
+            for (WorkItem item : workItemList) {
+                User user = userService.selectByPrimaryKey(item.getAdminId());
+                item.setAdminName(user.getLoginName());
+            }
             modelAndView.addObject("workItemList",workItemList);
         }
         // 待办

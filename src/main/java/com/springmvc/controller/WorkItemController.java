@@ -1,7 +1,9 @@
 package com.springmvc.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.springmvc.pojo.User;
 import com.springmvc.pojo.WorkItem;
+import com.springmvc.service.UserService;
 import com.springmvc.service.WorkItemService;
 import com.springmvc.utils.ResponseObject;
 import net.sf.json.JSONArray;
@@ -25,6 +27,8 @@ import java.util.Map;
 public class WorkItemController {
     @Autowired
     private WorkItemService workItemService;
+    @Autowired
+    private UserService userService;
 
     // 获取列表
     @ResponseBody
@@ -32,7 +36,12 @@ public class WorkItemController {
     public ResponseObject<Map<String, Object>> list(HttpServletRequest request) {
         Map<String, Object> params = new HashMap<String, Object>();
         Map<String, Object> aRetMap = new HashMap<String, Object>();
-        aRetMap.put("list", workItemService.list(params));
+        List<WorkItem> list = workItemService.list(params);
+        aRetMap.put("list", list);
+        for (WorkItem item : list) {
+            User user = userService.selectByPrimaryKey(item.getAdminId());
+            item.setAdminName(user.getLoginName());
+        }
         return new ResponseObject<Map<String, Object>>(aRetMap);
     }
 
@@ -53,10 +62,14 @@ public class WorkItemController {
             msgReturn = "保存失败";
         }
         Map<String, Object> params = new HashMap<String, Object>();
-        List<WorkItem> rolelists = workItemService.list(params);
+        List<WorkItem> list = workItemService.list(params);
+        for (WorkItem item : list) {
+            User user = userService.selectByPrimaryKey(item.getAdminId());
+            item.setAdminName(user.getLoginName());
+        }
         ModelAndView mv = new ModelAndView();
         mv.addObject("msgReturn", msgReturn);
-        mv.addObject("workItemList", rolelists);
+        mv.addObject("workItemList", list);
         mv.setViewName("views/workItemManagement");
         return mv;
     }
@@ -76,15 +89,16 @@ public class WorkItemController {
     @RequestMapping("/{id}")
     public ModelAndView view(@PathVariable Integer id, HttpServletRequest req) {
         WorkItem record = workItemService.selectByPrimaryKey(id);
-        record.getExtraInfo();
         ModelAndView mv = new ModelAndView();
-        try {
-            // 读取blob格式并转化成json对象
-            String extraInfo = new String(record.getExtraInfo(), "GB2312");
-            JSONObject extraInfoJson = JSONObject.fromObject(extraInfo);
-            mv.addObject("extraInfoJson", extraInfoJson);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        if (record.getExtraInfo() != null) {
+            try {
+                // 读取blob格式并转化成json对象
+                String extraInfo = new String(record.getExtraInfo(), "GB2312");
+                JSONObject extraInfoJson = JSONObject.fromObject(extraInfo);
+                mv.addObject("extraInfoJson", extraInfoJson);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
         mv.addObject("workItem", record);
         mv.setViewName("views/workItemEdit");

@@ -75,7 +75,6 @@
 
                                         <td>
                                             <a href="javascript:showHandel(${item.taskId});" class="btn btn-warning">开始处理</a>
-                                            <a href="#" class="btn btn-success">查看流程图</a>
                                         </td>
                                     </tr>
                                 </c:forEach>

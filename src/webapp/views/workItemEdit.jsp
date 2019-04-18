@@ -47,32 +47,54 @@
                             <div class="col-md-12">
                                 <input id="id" name="id" type="text" value="${workItem.id}"
                                        class="form-control form-control-line" readonly>
+                                <%-- 执行人 --%>
+                                <input id="adminId" name="adminId" type="text" value="<%=userId%>"
+                                       class="form-control form-control-line" hidden>
                             </div>
                         </div>
                         <%--TODO:数组库字段没有流程key的字段--%>
                         <div class="form-group">
                             <label class="col-sm-12">所属流程</label>
                             <div class="col-sm-12">
-                                <select id="flowKey" name="roleId" class="form-control form-control-line">
+                                <select id="flowName" name="flowName" class="form-control form-control-line">
+                                    <option value="${workItem.flowName}">${workItem.flowName}</option>
                                     <option value="TestFlow">TestFlow</option>
-                                    <option value="ceshi">测试</option>
+                                    <option value="develop">develop</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-12">项目名</label>
                             <div class="col-md-12">
-                                <input id="flowName" name="flowName" type="text" value="${workItem.flowName}"
+                                <input id="itemName" name="itemName" type="text" value="${workItem.itemName}"
                                        class="form-control form-control-line">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-12">其余信息</label>
                             <c:if test="${workItem.id==null}">
-                                <div class="col-md-12" style="display: inline-flex">
-                                    <input type="text" value="" style="width: 30%;margin-left: 32px;" placeholder="Key"
+                                <div class="col-md-12" style="display: inline-flex" id="extro">
+                                    <input id="key1" name="key1" type="text" value=""
+                                           style="width: 30%;margin-left: 32px;" placeholder="Key"
                                            class="form-control form-control-line">
-                                    <input type="text" value="" style="margin-left: 16px;" placeholder="Value"
+                                    <input id="value1" name="value1" type="text" value="" style="margin-left: 16px;"
+                                           placeholder="Value"
+                                           class="form-control form-control-line">
+                                </div>
+                                <div class="col-md-12" style="display: inline-flex" id="extro">
+                                    <input id="key2" name="key2" type="text" value=""
+                                           style="width: 30%;margin-left: 32px;" placeholder="Key"
+                                           class="form-control form-control-line">
+                                    <input id="value2" name="value2" type="text" value="" style="margin-left: 16px;"
+                                           placeholder="Value"
+                                           class="form-control form-control-line">
+                                </div>
+                                <div class="col-md-12" style="display: inline-flex" id="extro">
+                                    <input id="key3" name="key3" type="text" value=""
+                                           style="width: 30%;margin-left: 32px;" placeholder="Key"
+                                           class="form-control form-control-line">
+                                    <input id="value3" name="value3" type="text" value="" style="margin-left: 16px;"
+                                           placeholder="Value"
                                            class="form-control form-control-line">
                                 </div>
                             </c:if>
@@ -113,7 +135,8 @@
                 id: ${workItem.id},
                 userId:<%=userId%>,
                 operation: '提交',
-                comment: '流程启动'
+                comment: '流程启动',
+                flowKey: $('#flowName').val()
             }, function (result) {
                 if (result.data.success) {
                     alert("启动流程成功");

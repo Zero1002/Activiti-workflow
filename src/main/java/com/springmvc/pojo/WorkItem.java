@@ -5,6 +5,8 @@ import java.util.Date;
 public class WorkItem {
     private Integer id;
 
+    private String itemName;
+
     private String flowName;
 
     private String state;
@@ -14,6 +16,10 @@ public class WorkItem {
     private Date createdAt;
 
     private Date updatedAt;
+
+    private Integer adminId;
+
+    private String adminName;
 
     private Boolean isDel;
 
@@ -26,6 +32,10 @@ public class WorkItem {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public String getItemName() { return itemName; }
+
+    public void setItemName(String itemName) { this.itemName = itemName; }
 
     public String getFlowName() {
         return flowName;
@@ -65,6 +75,18 @@ public class WorkItem {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Integer getAdminId() { return adminId; }
+
+    public void setAdminId(Integer adminId) { this.adminId = adminId; }
+
+    public String getAdminName() {
+        return adminName;
+    }
+
+    public void setAdminName(String adminName) {
+        this.adminName = adminName;
     }
 
     public Boolean getIsDel() {
