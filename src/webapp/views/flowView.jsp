@@ -56,6 +56,7 @@
                                     <th style="white-space: nowrap;text-align:center">流程实例id</th>
                                     <th style="white-space: nowrap;text-align:center">项目状态</th>
                                     <th style="white-space: nowrap;text-align:center">处理人</th>
+                                    <th style="white-space: nowrap;text-align:center">操作</th>
                                     <th style="white-space: nowrap;text-align:center">描述</th>
                                     <th style="white-space: nowrap;text-align:center">创建时间</th>
                                     <th style="white-space: nowrap;text-align:center">处理时间</th>
@@ -63,15 +64,21 @@
                                 </thead>
                                 <tbody>
                                 <c:forEach items="${taskList}" var="item">
-                                    <tr>
-                                        <td>${item.taskId}</td>
-                                        <td><a href="<%=basePath%>/workItem/${item.id}">${item.id}</a></td>
-                                        <td>${item.processInstanceId}</td>
-                                        <td>${item.taskName}</td>
-                                        <td>${item.currentHandleName}</td>
-                                        <td>${item.description}</td>
-                                        <td>${item.createTime}</td>
-                                        <td>${item.endTime}</td>
+                                    <c:if test="${item.endTime==null||item.endTime==''}">
+                                        <tr style="background-color: yellow;color: black;">
+                                    </c:if>
+                                    <c:if test="${item.endTime!=null&&item.endTime!=''}">
+                                        <tr>
+                                    </c:if>
+                                    <td>${item.taskId}</td>
+                                    <td><a href="<%=basePath%>/workItem/${item.id}">${item.id}</a></td>
+                                    <td>${item.processInstanceId}</td>
+                                    <td>${item.taskName}</td>
+                                    <td>${item.currentHandleName}</td>
+                                    <td>${item.operation}</td>
+                                    <td>${item.description}</td>
+                                    <td>${item.createTime}</td>
+                                    <td>${item.endTime}</td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>

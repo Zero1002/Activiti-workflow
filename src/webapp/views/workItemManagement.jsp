@@ -69,8 +69,10 @@
                                         <td>
                                             <a href="<%=basePath%>/workItem/${item.id}" class="btn btn-warning">详情</a>
                                             <a href="javascript:deleteItem(${item.id});" class="btn btn-danger">删除</a>
-                                            <a href="<%=basePath%>/testFlow/showCurrentView?processInstanceId=${item.processInstanceId}"
-                                               class="btn btn-info">查看流程图</a>
+                                            <c:if test="${item.processInstanceId!=null}">
+                                                <a href="<%=basePath%>/testFlow/showCurrentView?processInstanceId=${item.processInstanceId}"
+                                                   class="btn btn-info">查看流程图</a>
+                                            </c:if>
                                         </td>
                                     </tr>
                                 </c:forEach>

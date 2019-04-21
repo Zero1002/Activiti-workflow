@@ -141,21 +141,25 @@ public class TestFlowController {
             if (comment == null || comment == "") {
                 comment = operation;
             }
-            taskService.addComment(taskId, processInstacnId, operation + "," + comment);
-            taskService.complete(taskId, variables);
-            // TODO:并行网关处理
             // 获取单号
             Integer id = (Integer) taskService.getVariable(taskId, "id");
-            Task nextTask = taskService.createTaskQuery().processInstanceId(task.getProcessInstanceId()).singleResult();
-            if (nextTask != null) {
-                if (nextTask.getName().equals("已处理")) {
-                    taskService.complete(nextTask.getId());
+            taskService.addComment(taskId, processInstacnId, operation + "," + comment);
+            taskService.complete(taskId, variables);
+            // 获取下个节点状态,并行网关查出来两个
+            List<Task> nextTask = taskService.createTaskQuery().processInstanceId(task.getProcessInstanceId()).list();
+            List<String> taskNames = new ArrayList<String>();
+            for (Task nt : nextTask) {
+                taskNames.add(nt.getName());
+                if (nt != null) {
+                    if (nt.getName().equals("产品上线")) {
+                        taskService.complete(nt.getId());
+                    }
+                    // 修改状态
+                    WorkItem workItem = new WorkItem();
+                    workItem.setId(id);
+                    workItem.setState(StringUtils.join(taskNames, ","));
+                    workItemService.updateByPrimaryKeySelective(workItem);
                 }
-                // 修改状态
-                WorkItem workItem = new WorkItem();
-                workItem.setId(id);
-                workItem.setState(nextTask.getName());
-                workItemService.updateByPrimaryKeySelective(workItem);
             }
         } catch (Exception e) {
             result.put("errorMsg", "流程审批流程失败：" + e.getMessage());
@@ -179,63 +183,66 @@ public class TestFlowController {
         ModelAndView mav = new ModelAndView();
 
         // 通过任务id查询流程定义
-        Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
-        String processDefinitionId = task.getProcessDefinitionId(); //获取流程定义Id
-        // 创建流程定义查询
-        // 根据流程定义id查询
-        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
-        mav.addObject("deploymentId", processDefinition.getDeploymentId()); // 部署id
-        mav.addObject("diagramResourceName", processDefinition.getDiagramResourceName()); // 图片资源文件名称
-        // 查看当前活动坐标
-        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) repositoryService.getProcessDefinition(processDefinitionId);
-        // 根据流程实例id查询活动实例
-        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().
-                processInstanceId(processInstanceId).singleResult();
-        ActivityImpl activityImpl = processDefinitionEntity.findActivity(processInstance.getActivityId());
-        mav.addObject("x", activityImpl.getX());
-        mav.addObject("y", activityImpl.getY());
-        mav.addObject("width", activityImpl.getWidth());
-        mav.addObject("height", activityImpl.getHeight());
-        try {
-            List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery()
-                    .processInstanceId(processInstanceId)
-                    .list();
-            // 流程逆转，按创建时间降序排列
-            Collections.reverse(list);
-            List<MyTask> tasks = new ArrayList<MyTask>(30);
-            // 查询历史批注表
-            List<Comment> comments = taskService.getProcessInstanceComments(processInstanceId);
-            // 获取单号
-            Integer id = (Integer) taskService.getVariable(task.getId(), "id");
-            for (HistoricTaskInstance ht : list) {
-                MyTask t = new MyTask();
-                t.setProcessInstanceId(processInstanceId);
-                t.setId(id.toString());
-                t.setFlowName("TestFlow");
-                // 节点处理人
-                for (int i = 0; i < comments.size(); i++) {
-                    if (ht.getId().equals(comments.get(i).getTaskId())) {
-                        User user = userService.selectByPrimaryKey(Integer.valueOf(comments.get(i).getUserId()));
-                        t.setCurrentHandleName(user == null ? comments.get(i).getUserId() : user.getLoginName());
-                        t.setOperation(comments.get(i).getFullMessage().split(",")[0]);
-                        t.setDescription(comments.get(i).getFullMessage().split(",").length <= 1 ? null : comments.get(i).getFullMessage().split(",")[1]);
+//        Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
+        List<Task> taskList = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
+        for (Task task : taskList) {
+            String processDefinitionId = task.getProcessDefinitionId(); //获取流程定义Id
+            // 创建流程定义查询
+            // 根据流程定义id查询
+            ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
+            mav.addObject("deploymentId", processDefinition.getDeploymentId()); // 部署id
+            mav.addObject("diagramResourceName", processDefinition.getDiagramResourceName()); // 图片资源文件名称
+            // 查看当前活动坐标
+            ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) repositoryService.getProcessDefinition(processDefinitionId);
+            // 根据流程实例id查询活动实例
+            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().
+                    processInstanceId(processInstanceId).singleResult();
+            ActivityImpl activityImpl = processDefinitionEntity.findActivity(processInstance.getActivityId());
+            mav.addObject("x", activityImpl.getX());
+            mav.addObject("y", activityImpl.getY());
+            mav.addObject("width", activityImpl.getWidth());
+            mav.addObject("height", activityImpl.getHeight());
+            try {
+                List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery()
+                        .processInstanceId(processInstanceId)
+                        .list();
+                // 流程逆转，按创建时间降序排列
+                Collections.reverse(list);
+                List<MyTask> tasks = new ArrayList<MyTask>(30);
+                // 查询历史批注表
+                List<Comment> comments = taskService.getProcessInstanceComments(processInstanceId);
+                // 获取单号
+                Integer id = (Integer) taskService.getVariable(task.getId(), "id");
+                for (HistoricTaskInstance ht : list) {
+                    MyTask t = new MyTask();
+                    t.setProcessInstanceId(processInstanceId);
+                    t.setId(id.toString());
+                    t.setFlowName("TestFlow");
+                    // 节点处理人
+                    for (int i = 0; i < comments.size(); i++) {
+                        if (ht.getId().equals(comments.get(i).getTaskId())) {
+                            User user = userService.selectByPrimaryKey(Integer.valueOf(comments.get(i).getUserId()));
+                            t.setCurrentHandleName(user == null ? comments.get(i).getUserId() : user.getLoginName());
+                            t.setOperation(comments.get(i).getFullMessage().split(",")[0]);
+                            t.setDescription(comments.get(i).getFullMessage().split(",").length <= 1 ? null : comments.get(i).getFullMessage().split(",")[1]);
+                        }
                     }
+                    t.setTaskId(ht.getId());
+                    t.setTaskName(ht.getName());
+                    t.setCreateTime(ht.getCreateTime());
+                    t.setEndTime(ht.getEndTime());
+                    // 查询定时任务获取到期时间
+                    Job job = managementService.createJobQuery().processInstanceId(processInstanceId).singleResult();
+                    t.setExpectTime(job == null ? null : job.getDuedate());
+                    tasks.add(t);
                 }
-                t.setTaskId(ht.getId());
-                t.setTaskName(ht.getName());
-                t.setCreateTime(ht.getCreateTime());
-                t.setEndTime(ht.getEndTime());
-                // 查询定时任务获取到期时间
-                Job job = managementService.createJobQuery().processInstanceId(processInstanceId).singleResult();
-                t.setExpectTime(job == null ? null : job.getDuedate());
-                tasks.add(t);
+                JsonConfig jsonConfig = new JsonConfig();
+                jsonConfig.registerJsonValueProcessor(Date.class, new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
+                JSONArray jsonArray = JSONArray.fromObject(tasks, jsonConfig);
+                mav.addObject("taskList", jsonArray);
+            } catch (Exception e) {
+                System.out.println("查询出错：" + e.getMessage());
             }
-            JsonConfig jsonConfig = new JsonConfig();
-            jsonConfig.registerJsonValueProcessor(Date.class, new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
-            JSONArray jsonArray = JSONArray.fromObject(tasks, jsonConfig);
-            mav.addObject("taskList", jsonArray);
-        } catch (Exception e) {
-            System.out.println("查询出错：" + e.getMessage());
         }
         mav.setViewName("views/flowView");
         return mav;

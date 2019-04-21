@@ -52,8 +52,8 @@
                                     <th style="white-space: nowrap;text-align:center">现应处理人</th>
                                     <th style="white-space: nowrap;text-align:center">描述</th>
                                     <th style="white-space: nowrap;text-align:center">创建时间</th>
-                                    <th style="white-space: nowrap;text-align:center">预计时间</th>
-                                    <th style="white-space: nowrap;text-align:center">结束时间</th>
+                                    <%--<th style="white-space: nowrap;text-align:center">预计时间</th>--%>
+                                    <%--<th style="white-space: nowrap;text-align:center">结束时间</th>--%>
                                     <th style="white-space: nowrap;text-align:center">操作</th>
                                 </tr>
                                 </thead>
@@ -66,11 +66,9 @@
                                         <td>${item.preHandleName}</td>
                                         <td>${item.currentHandleName}</td>
                                         <td>${item.description}</td>
-                                        <td><fmt:formatDate value='${item.createTime}'
-                                                            pattern='yyyy-MM-dd HH:ss:mm'/></td>
-                                        <td><fmt:formatDate value='${item.expectTime}'
-                                                            pattern='yyyy-MM-dd HH:ss:mm'/></td>
-                                        <td><fmt:formatDate value='${item.endTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
+                                        <td><fmt:formatDate value='${item.createTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
+                                        <%--<td><fmt:formatDate value='${item.expectTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>--%>
+                                        <%--<td><fmt:formatDate value='${item.endTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>--%>
 
                                         <td>
                                             <a href="javascript:showHandel(${item.taskId});" class="btn btn-warning">开始处理</a>
@@ -107,7 +105,7 @@
                             <div class="col-md-12">
                                 <div style="display: inline-flex">
                                     <a href="javascript:showHandel();" class="btn btn-info" style="margin:8px">关闭</a>
-                                    <a href="#" class="btn btn-info" style="margin:8px">指定其他审批人</a>
+                                    <a href="javascript:etrustOthers();" class="btn btn-info" style="margin:8px">指定其他审批人</a>
                                 </div>
 
                                 <div id="handleOperations" style="display: inline-flex">
@@ -171,7 +169,8 @@
                 comment: comment
             }, function (result) {
                 if (result.data.success) {
-                    alert(operation + "成功");
+                    alert("操作成功");
+                    location.reload();
                 } else {
                     alert(result.data.errorMsg);
                 }

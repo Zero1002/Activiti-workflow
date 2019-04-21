@@ -40,11 +40,10 @@
                                 <tr>
                                     <th style="white-space: nowrap;text-align:center">任务Id</th>
                                     <th style="white-space: nowrap;text-align:center">项目id</th>
-                                    <th style="white-space: nowrap;text-align:center">项目状态</th>
+                                    <th style="white-space: nowrap;text-align:center">任务节点</th>
                                     <th style="white-space: nowrap;text-align:center">处理人</th>
                                     <th style="white-space: nowrap;text-align:center">描述</th>
                                     <th style="white-space: nowrap;text-align:center">创建时间</th>
-                                    <th style="white-space: nowrap;text-align:center">预计时间</th>
                                     <th style="white-space: nowrap;text-align:center">结束时间</th>
                                     <th style="white-space: nowrap;text-align:center">操作</th>
                                 </tr>
@@ -58,7 +57,6 @@
                                         <td>${item.currentHandleName}</td>
                                         <td>${item.description}</td>
                                         <td><fmt:formatDate value='${item.createTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
-                                        <td><fmt:formatDate value='${item.expectTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
                                         <td><fmt:formatDate value='${item.endTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
                                         <td>
                                             <a href="<%=basePath%>/testFlow/showCurrentView?processInstanceId=${item.processInstanceId}"

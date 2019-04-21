@@ -271,7 +271,7 @@ public class TaskController {
             for (HistoricTaskInstance hit : taskList) {
                 // 如果该任务对应的流程实例在运行时任务表里查询到，说明就是这个流程实例未走完  并且用用户id以及任务id在运行时候任务表里查询不到结果  才算是已办任务
                 // 因为可能是任务刚分配给了别人
-                if ((taskService.createTaskQuery().processInstanceId(hit.getProcessInstanceId()).singleResult() != null)
+                if ((taskService.createTaskQuery().processInstanceId(hit.getProcessInstanceId()) != null)
                         && (taskService.createTaskQuery().taskCandidateUser(userId).taskId(hit.getId()).list().size() == 0)) {
                     MyTask myTask = new MyTask();
                     // 通过comment表查询上一节点审批人/元素反转
