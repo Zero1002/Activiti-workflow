@@ -15,7 +15,6 @@
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path;
     Integer userId = (Integer) session.getAttribute("SESSION_ID");
     Integer roleId = (Integer) session.getAttribute("SESSION_ROLE_ID");
-    Boolean isShow = false;
 %>
 
 <html>
@@ -110,13 +109,9 @@
                                     <a href="javascript:showHandel();" class="btn btn-info" style="margin:8px">关闭</a>
                                     <a href="#" class="btn btn-info" style="margin:8px">指定其他审批人</a>
                                 </div>
-                                <div style="display: inline-flex">
-                                    <%--TODO：有问题--%>
-                                    <c:forEach items="${operations}" var="item">
-                                        <a href="javascript:taskHandle(${item});" class="btn btn-success"
-                                           style="margin:8px">${item}
-                                        </a>
-                                    </c:forEach>
+
+                                <div id="handleOperations" style="display: inline-flex">
+                                    <%-- 审批按钮 --%>
                                 </div>
                             </div>
                         </div>
@@ -130,23 +125,9 @@
 </div>
 
 <script type="text/javascript">
-    // 重载页面
-    function taskList() {
-        $.post("<%=basePath%>/task/toDoList", {
-            s_taskName: "",
-            roleId:<%=roleId%>,
-            userId:<%=userId%>
-        }, function (result) {
-            if (result.data) {
-                alert(result.data.rows);
-            } else {
-                alert("查询失败");
-            }
-        }, "json");
-    }
-
     var isShow = false;
 
+    // 展现审批界面
     function showHandel($taskId) {
         isShow = !isShow;
         if (isShow) {
@@ -155,8 +136,15 @@
                 roleId:<%=roleId%>,
                 flowName: "develop"
             }, function (result) {
-                if (result.data) {
-                    // = result.data.operations;
+                if (result.data.success) {
+                    var operations = result.data.operations;
+                    // 我简直天才啊！！！
+                    for (var i in operations) {
+                        document.getElementById("handleOperations")
+                            .insertAdjacentHTML("afterEnd",
+                                "<a href=\"javascript:taskHandle('" + operations[i] + "');\" " +
+                                " class='btn btn-success'  style='margin:8px'>" + operations[i] + " </a>");
+                    }
                 } else {
                     alert("No Right");
                 }
@@ -168,13 +156,13 @@
             document.getElementById("taskListCard").className = "col-lg-12";
             document.getElementById("taskHandleCard").style.display = "none";
         }
-
     }
 
+    // 审批处理
     function taskHandle($operation) {
         var taskId = $('#taskId').val();
         var comment = $('#comment').val();
-        var isConfirm = confirm("确定当前操作吗");
+        var isConfirm = confirm("确定当前操作[" + $operation + "]吗");
         if (isConfirm) {
             $.post("<%=basePath%>/testFlow/handle", {
                 taskId: taskId,

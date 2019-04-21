@@ -392,7 +392,7 @@ public class TaskController {
         String taskName = "";
         ArrayList<String> list = new ArrayList<String>();
         try {
-            String[] splitOP= new String[0];
+            String[] splitOP = new String[0];
             for (String role_name : roleNameList) {
                 Map<String, Object> map = new HashMap<String, Object>();
                 Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
@@ -411,6 +411,40 @@ public class TaskController {
         } catch (Exception e) {
             result.put("success", false);
             result.put("errorMsg", e.getMessage());
+            return new ResponseObject<Map<String, Object>>(result);
+        }
+    }
+
+    /**
+     * 委托办理功能
+     *
+     * @param taskId
+     * @param assignUserId
+     * @param assignRole
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping("/entrustHandle")
+    public ResponseObject<Map<String, Object>> entrustHandle(String taskId, String assignUserId, String assignRole) throws Exception {
+        Map<String, Object> result = new HashMap<String, Object>();
+        if (assignUserId == null && assignRole == null) {
+            result.put("errorMsg", "请选定委托办理人/组");
+            result.put("success", false);
+            return new ResponseObject<Map<String, Object>>(result);
+        }
+        try {
+            if (assignUserId != null && assignUserId != "") {
+                taskService.addCandidateUser(taskId, assignUserId);
+            }
+            if (assignRole != null && assignRole != "") {
+                taskService.addCandidateGroup(taskId, assignRole);
+            }
+            result.put("success", true);
+            return new ResponseObject<Map<String, Object>>(result);
+        } catch (Exception e) {
+            result.put("errorMsg", e.getMessage());
+            result.put("success", false);
             return new ResponseObject<Map<String, Object>>(result);
         }
     }
