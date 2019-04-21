@@ -111,9 +111,12 @@
                                     <a href="#" class="btn btn-info" style="margin:8px">指定其他审批人</a>
                                 </div>
                                 <div style="display: inline-flex">
-                                    <%--TODO: 审批操作灵活化--%>
-                                    <a href="javascript:taskHandle();" class="btn btn-success" style="margin:8px">通过</a>
-                                    <a href="#" class="btn btn-warning" style="margin:8px">驳回</a>
+                                    <%--TODO：有问题--%>
+                                    <c:forEach items="${operations}" var="item">
+                                        <a href="javascript:taskHandle(${item});" class="btn btn-success"
+                                           style="margin:8px">${item}
+                                        </a>
+                                    </c:forEach>
                                 </div>
                             </div>
                         </div>
@@ -147,6 +150,17 @@
     function showHandel($taskId) {
         isShow = !isShow;
         if (isShow) {
+            $.post("<%=basePath%>/task/listRoleWithOperations", {
+                taskId: $taskId,
+                roleId:<%=roleId%>,
+                flowName: "develop"
+            }, function (result) {
+                if (result.data) {
+                    // = result.data.operations;
+                } else {
+                    alert("No Right");
+                }
+            }, "json");
             document.getElementById("taskListCard").className = "col-lg-8 col-xlg-9 col-md-7";
             document.getElementById("taskHandleCard").style.display = "";
             $('#taskId').val($taskId);
@@ -157,16 +171,15 @@
 
     }
 
-    function taskHandle() {
+    function taskHandle($operation) {
         var taskId = $('#taskId').val();
         var comment = $('#comment').val();
-        var operation = '处理';
         var isConfirm = confirm("确定当前操作吗");
         if (isConfirm) {
             $.post("<%=basePath%>/testFlow/handle", {
                 taskId: taskId,
                 userId:<%=userId%>,
-                operation: operation,
+                operation: $operation,
                 comment: comment
             }, function (result) {
                 if (result.data.success) {

@@ -1,8 +1,9 @@
-<%@ page import="static org.activiti.engine.impl.util.json.Cookie.unescape" %><%--
+<%@ page import="com.springmvc.pojo.User" %>
+<%--
   Created by IntelliJ IDEA.
   User: Administrator
-  Date: 2019/3/27
-  Time: 21:44
+  Date: 2019/4/21
+  Time: 10:23
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
@@ -19,18 +20,30 @@
     <jsp:include page="./baseView.jsp"></jsp:include>
     <title>后台管理系统首页</title>
 </head>
-<body onload="onload();">
+<body class="fix-header fix-sidebar card-no-border">
 <div class="page-wrapper">
     <div class="container-fluid">
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
-                <h3 class="text-themecolor m-b-0 m-t-0">
-                    已办任务管理
-                </h3>
+                <h3 class="text-themecolor m-b-0 m-t-0">流程图</h3>
             </div>
         </div>
         <div class="row">
             <!-- column -->
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-block">
+                        <div class="table-responsive">
+                            <div style="overflow-x: auto;white-space: nowrap;">
+                                <img style="top: 0px;left: 0px;width: max-content;height: max-content;"
+                                     src="<%=basePath%>/testFlow/showView?deploymentId=${deploymentId}&diagramResourceName=${diagramResourceName}"/>
+                                <%--<div style="position: absolute;border:1px solid red;top:${y-3 }px;left: ${x-3 }px;width: ${width+3 }px;height:${height+3 }px;"></div>--%>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%--流程扭转过程--%>
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-block">
@@ -40,13 +53,13 @@
                                 <tr>
                                     <th style="white-space: nowrap;text-align:center">任务Id</th>
                                     <th style="white-space: nowrap;text-align:center">项目id</th>
+                                    <th style="white-space: nowrap;text-align:center">流程实例id</th>
                                     <th style="white-space: nowrap;text-align:center">项目状态</th>
                                     <th style="white-space: nowrap;text-align:center">处理人</th>
                                     <th style="white-space: nowrap;text-align:center">描述</th>
                                     <th style="white-space: nowrap;text-align:center">创建时间</th>
                                     <th style="white-space: nowrap;text-align:center">预计时间</th>
-                                    <th style="white-space: nowrap;text-align:center">结束时间</th>
-                                    <th style="white-space: nowrap;text-align:center">操作</th>
+                                    <th style="white-space: nowrap;text-align:center">处理时间</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -54,16 +67,16 @@
                                     <tr>
                                         <td>${item.taskId}</td>
                                         <td><a href="<%=basePath%>/workItem/${item.id}">${item.id}</a></td>
+                                        <td>${item.processInstanceId}</td>
                                         <td>${item.taskName}</td>
                                         <td>${item.currentHandleName}</td>
                                         <td>${item.description}</td>
-                                        <td><fmt:formatDate value='${item.createTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
-                                        <td><fmt:formatDate value='${item.expectTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
-                                        <td><fmt:formatDate value='${item.endTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
-                                        <td>
-                                            <a href="<%=basePath%>/testFlow/showCurrentView?processInstanceId=${item.processInstanceId}"
-                                               class="btn btn-info">查看流程图</a>
-                                        </td>
+                                        <%--<td><fmt:formatDate value='${item.createTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>--%>
+                                        <%--<td><fmt:formatDate value='${item.expectTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>--%>
+                                        <%--<td><fmt:formatDate value='${item.endTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>--%>
+                                        <td>${item.createTime}</td>
+                                        <td>${item.expectTime}</td>
+                                        <td>${item.endTime}</td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>
@@ -72,14 +85,11 @@
                     </div>
                 </div>
             </div>
+
+
         </div>
     </div>
 </div>
-
-
-<script type="text/javascript">
-
-</script>
 </body>
 
 

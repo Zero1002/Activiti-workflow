@@ -9,12 +9,12 @@ import com.springmvc.service.WorkItemService;
 import com.springmvc.utils.ResponseObject;
 import net.sf.json.JSONArray;
 import net.sf.json.JsonConfig;
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.ManagementService;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
+import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.activiti.engine.impl.pvm.process.ActivityImpl;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.Job;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Comment;
@@ -25,7 +25,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.*;
 
 @Controller
@@ -48,6 +52,9 @@ public class TestFlowController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RepositoryService repositoryService;
 
     /**
      * 流程启动
@@ -160,19 +167,35 @@ public class TestFlowController {
     }
 
     /**
-     * 流程图
+     * 查询当前流程图
      *
      * @param processInstanceId
+     * @param response
      * @return
      * @throws Exception
      */
-    @ResponseBody
-    @RequestMapping("/showProcess")
-    public ResponseObject<Map<String, Object>> showProcess(String processInstanceId) throws Exception {
-        if (processInstanceId == null) {
-            return null;
-        }
-        Map<String, Object> result = new HashMap<String, Object>();
+    @RequestMapping("/showCurrentView")
+    public ModelAndView showCurrentView(String processInstanceId, HttpServletResponse response) throws Exception {
+        ModelAndView mav = new ModelAndView();
+
+        // 通过任务id查询流程定义
+        Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
+        String processDefinitionId = task.getProcessDefinitionId(); //获取流程定义Id
+        // 创建流程定义查询
+        // 根据流程定义id查询
+        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
+        mav.addObject("deploymentId", processDefinition.getDeploymentId()); // 部署id
+        mav.addObject("diagramResourceName", processDefinition.getDiagramResourceName()); // 图片资源文件名称
+        // 查看当前活动坐标
+        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) repositoryService.getProcessDefinition(processDefinitionId);
+        // 根据流程实例id查询活动实例
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().
+                processInstanceId(processInstanceId).singleResult();
+        ActivityImpl activityImpl = processDefinitionEntity.findActivity(processInstance.getActivityId());
+        mav.addObject("x", activityImpl.getX());
+        mav.addObject("y", activityImpl.getY());
+        mav.addObject("width", activityImpl.getWidth());
+        mav.addObject("height", activityImpl.getHeight());
         try {
             List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery()
                     .processInstanceId(processInstanceId)
@@ -182,7 +205,6 @@ public class TestFlowController {
             List<MyTask> tasks = new ArrayList<MyTask>(30);
             // 查询历史批注表
             List<Comment> comments = taskService.getProcessInstanceComments(processInstanceId);
-            Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
             // 获取单号
             Integer id = (Integer) taskService.getVariable(task.getId(), "id");
             for (HistoricTaskInstance ht : list) {
@@ -211,14 +233,38 @@ public class TestFlowController {
             JsonConfig jsonConfig = new JsonConfig();
             jsonConfig.registerJsonValueProcessor(Date.class, new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
             JSONArray jsonArray = JSONArray.fromObject(tasks, jsonConfig);
-            result.put("rows", jsonArray);
-            result.put("success", true);
-            return new ResponseObject<Map<String, Object>>(result);
+            mav.addObject("taskList", jsonArray);
         } catch (Exception e) {
-            result.put("errorMsg", "查询出错：" + e.getMessage());
-            result.put("success", false);
-            return new ResponseObject<Map<String, Object>>(result);
+            System.out.println("查询出错：" + e.getMessage());
         }
+        mav.setViewName("views/flowView");
+        return mav;
+    }
 
+    /**
+     * 查看流程图
+     *
+     * @param deploymentId
+     * @param diagramResourceName
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/showView")
+    public String showView(String deploymentId, String diagramResourceName, HttpServletResponse response) throws Exception {
+        try {
+            InputStream in = repositoryService.getResourceAsStream(deploymentId, diagramResourceName);
+            OutputStream out = response.getOutputStream();
+            int len = 0;
+            byte[] bytes = new byte[1024];
+            while ((len = in.read(bytes)) != -1) {
+                out.write(bytes, 0, len);
+            }
+            out.close();
+            in.close();
+        } catch (Exception e) {
+            System.out.println("查询流程图失败" + e.getMessage());
+        }
+        return null;
     }
 }
