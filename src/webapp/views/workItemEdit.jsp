@@ -118,7 +118,6 @@
 
                     </form>
                     <c:if test="${workItem.id>0&&workItem.state==null}">
-                        <%-- TODO:选择框指定哪个流程启动--%>
                         <a href="javascript:start();" class="btn btn-danger">启动流程</a>
                     </c:if>
                 </div>

@@ -82,8 +82,6 @@ public class TestFlowController {
         variables.put("operation", operation);                              // 操作
         variables.put("assignUser", assignUser == null ? "" : assignUser);  // 指定所属人
         variables.put("assignRole", assignRole == null ? "" : assignRole);  // 指定所属组
-        // test
-        variables.put("isSuccess", false);
         try {
             ProcessInstance pi = runtimeService.startProcessInstanceByKey(flowKey, variables);
             Task task = taskService.createTaskQuery().processInstanceId(pi.getProcessInstanceId()).singleResult();
