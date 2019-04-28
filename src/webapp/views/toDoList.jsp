@@ -66,9 +66,10 @@
                                         <td>${item.preHandleName}</td>
                                         <td>${item.currentHandleName}</td>
                                         <td>${item.description}</td>
-                                        <td><fmt:formatDate value='${item.createTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>
-                                        <%--<td><fmt:formatDate value='${item.expectTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>--%>
-                                        <%--<td><fmt:formatDate value='${item.endTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>--%>
+                                        <td><fmt:formatDate value='${item.createTime}'
+                                                            pattern='yyyy-MM-dd HH:ss:mm'/></td>
+                                            <%--<td><fmt:formatDate value='${item.expectTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>--%>
+                                            <%--<td><fmt:formatDate value='${item.endTime}' pattern='yyyy-MM-dd HH:ss:mm'/></td>--%>
 
                                         <td>
                                             <a href="javascript:showHandel(${item.taskId});" class="btn btn-warning">开始处理</a>
@@ -105,7 +106,8 @@
                             <div class="col-md-12">
                                 <div style="display: inline-flex">
                                     <a href="javascript:showHandel();" class="btn btn-info" style="margin:8px">关闭</a>
-                                    <a href="javascript:etrustOthers();" class="btn btn-info" style="margin:8px">指定其他审批人</a>
+                                    <a href="javascript:etrustOthers();" class="btn btn-info"
+                                       style="margin:8px">指定其他审批人</a>
                                 </div>
 
                                 <div id="handleOperations" style="display: inline-flex">
@@ -124,29 +126,33 @@
 
 <script type="text/javascript">
     var isShow = false;
+    var n = 1;
 
     // 展现审批界面
     function showHandel($taskId) {
         isShow = !isShow;
         if (isShow) {
-            $.post("<%=basePath%>/task/listRoleWithOperations", {
-                taskId: $taskId,
-                roleId:<%=roleId%>,
-                flowName: "develop"
-            }, function (result) {
-                if (result.data.success) {
-                    var operations = result.data.operations;
-                    // 我简直天才啊！！！
-                    for (var i in operations) {
-                        document.getElementById("handleOperations")
-                            .insertAdjacentHTML("afterEnd",
-                                "<a href=\"javascript:taskHandle('" + operations[i] + "');\" " +
-                                " class='btn btn-success'  style='margin:8px'>" + operations[i] + " </a>");
+            if (n == 1) {
+                $.post("<%=basePath%>/task/listRoleWithOperations", {
+                    taskId: $taskId,
+                    roleId:<%=roleId%>,
+                    flowName: "develop"
+                }, function (result) {
+                    if (result.data.success) {
+                        var operations = result.data.operations;
+                        // 我简直天才啊！！！
+                        for (var i in operations) {
+                            document.getElementById("handleOperations")
+                                .insertAdjacentHTML("afterEnd",
+                                    "<a href=\"javascript:taskHandle('" + operations[i] + "');\" " +
+                                    " class='btn btn-success'  style='margin:8px'>" + operations[i] + " </a>");
+                        }
+                    } else {
+                        alert("No Right");
                     }
-                } else {
-                    alert("No Right");
-                }
-            }, "json");
+                }, "json");
+                n++;
+            }
             document.getElementById("taskListCard").className = "col-lg-8 col-xlg-9 col-md-7";
             document.getElementById("taskHandleCard").style.display = "";
             $('#taskId').val($taskId);
