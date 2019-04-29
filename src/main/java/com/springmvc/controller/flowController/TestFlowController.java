@@ -1,9 +1,11 @@
 package com.springmvc.controller.flowController;
 
 import com.springmvc.pojo.MyTask;
+import com.springmvc.pojo.Role;
 import com.springmvc.pojo.User;
 import com.springmvc.pojo.WorkItem;
 import com.springmvc.service.RoleOperationService;
+import com.springmvc.service.RoleService;
 import com.springmvc.service.UserService;
 import com.springmvc.service.WorkItemService;
 import com.springmvc.utils.ResponseObject;
@@ -18,6 +20,7 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.Job;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Comment;
+import org.activiti.engine.task.IdentityLink;
 import org.activiti.engine.task.Task;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/testFlow")
@@ -55,6 +60,9 @@ public class TestFlowController {
 
     @Autowired
     private RepositoryService repositoryService;
+
+    @Autowired
+    private RoleService roleService;
 
     /**
      * 流程启动
@@ -216,7 +224,7 @@ public class TestFlowController {
                     t.setProcessInstanceId(processInstanceId);
                     t.setId(id.toString());
                     t.setFlowName("TestFlow");
-                    // 节点处理人
+                    // 已处理节点处理人
                     for (int i = 0; i < comments.size(); i++) {
                         if (ht.getId().equals(comments.get(i).getTaskId())) {
                             User user = userService.selectByPrimaryKey(Integer.valueOf(comments.get(i).getUserId()));
@@ -224,6 +232,34 @@ public class TestFlowController {
                             t.setOperation(comments.get(i).getFullMessage().split(",")[0]);
                             t.setDescription(comments.get(i).getFullMessage().split(",").length <= 1 ? null : comments.get(i).getFullMessage().split(",")[1]);
                         }
+                    }
+                    if (t.getCurrentHandleName() == null || t.getCurrentHandleName() == "") {
+                        // 查询当前节点任务办理 候选组/候选人
+                        List<IdentityLink> identityLinksForTask = taskService.getIdentityLinksForTask(ht.getId());
+                        StringBuilder str = new StringBuilder();
+                        for (int i = 0; i < identityLinksForTask.size(); i++) {
+                            String tmpCandidate = "";
+                            // 显示userId
+                            if (identityLinksForTask.get(i).getUserId() != null) {
+                                tmpCandidate = identityLinksForTask.get(i).getUserId();
+                                User user = userService.selectByPrimaryKey(Integer.valueOf(tmpCandidate));
+                                tmpCandidate = user == null ? tmpCandidate : user.getLoginName();
+                            }
+                            if (identityLinksForTask.get(i).getGroupId() != null) {
+                                Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+                                Matcher m = p.matcher(identityLinksForTask.get(i).getGroupId());
+                                if (m.find()) {
+                                    tmpCandidate = identityLinksForTask.get(i).getGroupId();
+                                } else {
+                                    Role role = roleService.selectByPrimaryKey(Integer.valueOf(identityLinksForTask.get(i).getGroupId()));
+                                    tmpCandidate = role.getRoleName();
+                                }
+                            }
+                            if (tmpCandidate != null && tmpCandidate != "") {
+                                str.append(" " + tmpCandidate);
+                            }
+                        }
+                        t.setCurrentHandleName(str.toString().trim());
                     }
                     t.setTaskId(ht.getId());
                     t.setTaskName(ht.getName());

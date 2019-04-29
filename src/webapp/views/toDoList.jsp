@@ -135,7 +135,6 @@
             if (n == 1) {
                 $.post("<%=basePath%>/task/listRoleWithOperations", {
                     taskId: $taskId,
-                    roleId:<%=roleId%>,
                     flowName: "develop"
                 }, function (result) {
                     if (result.data.success) {
@@ -173,6 +172,26 @@
                 userId:<%=userId%>,
                 operation: $operation,
                 comment: comment
+            }, function (result) {
+                if (result.data.success) {
+                    alert("操作成功");
+                    location.reload();
+                } else {
+                    alert(result.data.errorMsg);
+                }
+            }, "json");
+        }
+    }
+
+    // 选定角色或用户指定审批
+    function etrustOthers() {
+        var taskId = $('#taskId').val();
+        var isConfirm = confirm("确定当前操作吗");
+        if (isConfirm) {
+            $.post("<%=basePath%>/task/entrustHandle", {
+                taskId: taskId,
+                assignUserId: 9,
+                assignRole: 9
             }, function (result) {
                 if (result.data.success) {
                     alert("操作成功");

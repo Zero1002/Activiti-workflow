@@ -386,24 +386,19 @@ public class TaskController {
     @ResponseBody
     @RequestMapping("/listRoleWithOperations")
     public ResponseObject<Map<String, Object>>
-    listRoleWithOperations(String taskId, String roleId, String flowName) throws Exception {
+    listRoleWithOperations(String taskId, String flowName) throws Exception {
         Map<String, Object> result = new HashMap<String, Object>();
-        String[] roleNameList = StringUtils.split(roleId, ",");
         String taskName = "";
         ArrayList<String> list = new ArrayList<String>();
         try {
             String[] splitOP = new String[0];
-            for (String role_name : roleNameList) {
-                Map<String, Object> map = new HashMap<String, Object>();
-                Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-                map.put("taskName", task.getName());
-                taskName = task.getName();
-                map.put("flowName", flowName);
-                map.put("roleId", role_name);
-                RoleOperation roleOperation = roleOperationService.find(map).get(0);
-                splitOP = roleOperation.getOperation().split(",");
-
-            }
+            Map<String, Object> map = new HashMap<String, Object>();
+            Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+            map.put("taskName", task.getName());
+            taskName = task.getName();
+            map.put("flowName", flowName);
+            RoleOperation roleOperation = roleOperationService.find(map).get(0);
+            splitOP = roleOperation.getOperation().split(",");
             result.put("taskName", taskName);
             result.put("operations", splitOP);
             result.put("success", true);
