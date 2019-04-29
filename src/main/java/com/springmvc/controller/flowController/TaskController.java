@@ -205,6 +205,13 @@ public class TaskController {
             // 返回jsp
             modelAndView.setViewName("views/toDoList");
             modelAndView.addObject("taskList", tasks);
+            // 返回角色列表
+            Map<String, Object> params = new HashMap<String, Object>();
+            List<Role> rolelists = roleService.list(params);
+            modelAndView.addObject("rolelists", rolelists);
+            // 返回用户列表
+            List<User> userlists = userService.list(params);
+            modelAndView.addObject("userlists", userlists);
             return modelAndView;
         } catch (Exception e) {
             result.put("errorMsg", "待办查询失败：" + e.getMessage());

@@ -102,6 +102,28 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="col-sm-12">指定角色</label>
+                            <div class="col-sm-12">
+                                <select id="assignRole" name="assignRole" class="form-control form-control-line">
+                                    <option value=""></option>
+                                    <c:forEach items="${rolelists}" var="item">
+                                        <option value="${item.id}">${item.roleName}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-12">角色</label>
+                            <div class="col-sm-12">
+                                <select id="assignUserId" name="assignUserId" class="form-control form-control-line">
+                                    <option value=""></option>
+                                    <c:forEach items="${userlists}" var="item">
+                                        <option value="${item.id}">${item.loginName}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="col-md-12">操作</label>
                             <div class="col-md-12">
                                 <div style="display: inline-flex">
@@ -186,15 +208,21 @@
     // 选定角色或用户指定审批
     function etrustOthers() {
         var taskId = $('#taskId').val();
-        var isConfirm = confirm("确定当前操作吗");
+        var assignUserId = $('#assignUserId').val();
+        var assignRole = $('#assignRole').val();
+        if (assignUserId == '' && assignRole == '') {
+            alert("请指定委托人");
+            return false;
+        }
+        var isConfirm = confirm("确定委托处理吗");
         if (isConfirm) {
             $.post("<%=basePath%>/task/entrustHandle", {
                 taskId: taskId,
-                assignUserId: 9,
-                assignRole: 9
+                assignUserId: assignUserId,
+                assignRole: assignRole
             }, function (result) {
                 if (result.data.success) {
-                    alert("操作成功");
+                    alert("委托成功");
                     location.reload();
                 } else {
                     alert(result.data.errorMsg);
