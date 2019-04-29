@@ -234,6 +234,15 @@ public class TestFlowController {
                     t.setExpectTime(job == null ? null : job.getDuedate());
                     tasks.add(t);
                 }
+                // 按集合createTime降序排列
+                Collections.sort(tasks, new Comparator() {
+                    public int compare(Object o1, Object o2) {
+                        MyTask task1 = (MyTask) o1;
+                        MyTask task2 = (MyTask) o2;
+                        int flag = task2.getCreateTime().compareTo(task1.getCreateTime());
+                        return flag;
+                    }
+                });
                 JsonConfig jsonConfig = new JsonConfig();
                 jsonConfig.registerJsonValueProcessor(Date.class, new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
                 JSONArray jsonArray = JSONArray.fromObject(tasks, jsonConfig);
