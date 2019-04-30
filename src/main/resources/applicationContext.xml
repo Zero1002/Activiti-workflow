@@ -100,4 +100,18 @@
 	
 	<!-- 导入Activiti配置 -->
 	<import resource="classpath:activiti-context.xml"/>
+
+    <!-- Spring的邮件封装类 -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="protocol" value="smtp"/>
+        <property name="host" value="smtp.qq.com"/>
+        <property name="port" value="25" />
+        <property name="username" value="649314761@qq.com"/>
+        <property name="password" value="zcfddfvsdjilbfhd"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">true</prop>
+            </props>
+        </property>
+    </bean>
 </beans>

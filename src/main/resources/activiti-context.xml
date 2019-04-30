@@ -26,7 +26,14 @@
         <property name="mailServerPassword" value="zcfddfvsdjilbfhd"/>
         <property name="mailServerUseSSL" value="true"/>
         <property name="history" value="full"/>
+        <!-- 配置监听器 -->
+        <property name="eventListeners">
+            <list>
+                <bean class="com.springmvc.listeners.MyEventListener"></bean>
+            </list>
+        </property>
     </bean>
+
 
     <!-- 定义流程引擎 -->
     <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">

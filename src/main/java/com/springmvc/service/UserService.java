@@ -22,5 +22,7 @@ public interface UserService {
 
     List<User> list( Map<String, Object> params);
 
+    List<User> listByRoleId(Integer roleId);
+
     User findUserByNamePwd(User record);
 }

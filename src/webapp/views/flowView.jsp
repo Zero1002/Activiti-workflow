@@ -53,8 +53,7 @@
                                 <tr>
                                     <th style="white-space: nowrap;text-align:center">任务Id</th>
                                     <th style="white-space: nowrap;text-align:center">项目id</th>
-                                    <th style="white-space: nowrap;text-align:center">流程实例id</th>
-                                    <th style="white-space: nowrap;text-align:center">项目状态</th>
+                                    <th style="white-space: nowrap;text-align:center">节点名称</th>
                                     <th style="white-space: nowrap;text-align:center">处理人</th>
                                     <th style="white-space: nowrap;text-align:center">操作</th>
                                     <th style="white-space: nowrap;text-align:center">描述</th>
@@ -72,7 +71,6 @@
                                     </c:if>
                                     <td>${item.taskId}</td>
                                     <td><a href="<%=basePath%>/workItem/${item.id}">${item.id}</a></td>
-                                    <td>${item.processInstanceId}</td>
                                     <td>${item.taskName}</td>
                                     <td>${item.currentHandleName}</td>
                                     <td>${item.operation}</td>

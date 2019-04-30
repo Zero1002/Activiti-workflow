@@ -23,5 +23,7 @@ public interface UserMapper {
 
     List<User> list(@Param(value = "params") Map<String, Object> params);
 
+    List<User> listByRoleId(Integer roleId);
+
     User findUserByNamePwd(User record);
 }

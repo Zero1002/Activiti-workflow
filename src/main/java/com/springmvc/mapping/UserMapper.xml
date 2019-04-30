@@ -57,6 +57,16 @@
     order by pr.created_at desc
   </select>
 
+  <select id="listByRoleId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Join_Column_List" />,r.role_name as roleName
+    FROM user pr left outer join role r on pr.role_id = r.id
+    WHERE 1=1
+    AND pr.role_id = #{roleId,jdbcType=INTEGER}
+    AND pr.is_del = FALSE
+    order by pr.created_at desc
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from user
     where id = #{id,jdbcType=INTEGER}

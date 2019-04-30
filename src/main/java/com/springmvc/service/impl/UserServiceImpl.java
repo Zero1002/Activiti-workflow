@@ -48,6 +48,10 @@ public class UserServiceImpl implements UserService {
         return userMapper.list(params);
     }
 
+    public List<User> listByRoleId(Integer roleId) {
+        return userMapper.listByRoleId(roleId);
+    }
+
     public User findUserByNamePwd(User record) {
         return userMapper.findUserByNamePwd(record);
     }
