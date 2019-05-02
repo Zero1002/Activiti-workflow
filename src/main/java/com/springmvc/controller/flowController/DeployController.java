@@ -43,9 +43,9 @@ public class DeployController {
     public ResponseObject<Map<String, Object>> deploy(@RequestParam("deployFile") MultipartFile deployFile) throws Exception {
         Map<String, Object> result = new HashMap<String, Object>();
         try {
-            repositoryService.createDeployment().
-                    name(deployFile.getOriginalFilename()). //部署程序的名字
-                    addZipInputStream(new ZipInputStream(deployFile.getInputStream())) //添加zipinputstream  new一个就好
+            repositoryService.createDeployment()
+                    .name(deployFile.getOriginalFilename())
+                    .addZipInputStream(new ZipInputStream(deployFile.getInputStream()))
                     .deploy();
             result.put("success", true);
             return new ResponseObject<Map<String, Object>>(result);
