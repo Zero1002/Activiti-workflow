@@ -113,7 +113,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-12">角色</label>
+                            <label class="col-sm-12">指定用户</label>
                             <div class="col-sm-12">
                                 <select id="assignUserId" name="assignUserId" class="form-control form-control-line">
                                     <option value=""></option>

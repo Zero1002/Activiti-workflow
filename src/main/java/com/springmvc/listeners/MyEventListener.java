@@ -20,10 +20,8 @@ import java.util.*;
  * 创建监听器，实现ActivitiEventListener接口
  */
 public class MyEventListener implements ActivitiEventListener {
-
     @Autowired
     private MailSender mailSender;
-
     @Autowired
     private UserService userService;
 
@@ -63,18 +61,6 @@ public class MyEventListener implements ActivitiEventListener {
             }
             String usersMailAddress = StringUtils.join(userMails, ",");
             this.sendTaskMail(taskEntity.getId(), taskEntity.getName(), usersMailAddress);
-        }
-        if (event.getType() == ActivitiEventType.TASK_ASSIGNED) {// 任务认领，按照谁先登录谁先认领的原则，认领后会给该认领的用户发邮件
-            ActivitiEntityEvent entityEvent = (ActivitiEntityEvent) event;
-            TaskEntity taskEntity = (TaskEntity) entityEvent.getEntity();//认领后我们主要用taskEntity.getAssignee()来查询当前用户信息，并发邮件
-            // this.sendTaskMail(taskEntity.getOwner(), taskEntity.getAssignee(), taskEntity.getName(), event.getType());
-        }
-        // 审批完成，首先会进入下一节点，并给下一节点的用户发邮件，之后会通过历史流程去找到流程发起者，并将审批信息通过邮件发送给发起者。
-        // 这里要注意，该类不能注入historyService，因为它先于historyService存在，必须通过entityEvent.getEngineServices();去获取。
-        if (event.getType() == ActivitiEventType.TASK_COMPLETED) {
-            ActivitiEntityEvent entityEvent = (ActivitiEntityEvent) event;
-            TaskEntity taskEntity = (TaskEntity) entityEvent.getEntity();
-            // this.sendTaskMail(taskEntity.getId(), taskEntity.getAssignee(), taskEntity.getName(), event.getType());//不要太在意这个方法，随便写的
         }
     }
 
