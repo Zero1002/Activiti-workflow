@@ -169,18 +169,14 @@
                            aria-expanded="false"><i
                             class="mdi mdi-table"></i><span class="hide-menu">已办任务管理</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=historyManagement"
+                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/def/list"
                            aria-expanded="false"><i
-                            class="mdi mdi-emoticon"></i><span class="hide-menu">历史任务管理</span></a>
+                            class="mdi mdi-help-circle"></i><span class="hide-menu">流程定义与部署</span></a>
                     </li>
-                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=deployManagement"
-                           aria-expanded="false"><i
-                            class="mdi mdi-help-circle"></i><span class="hide-menu">流程部署管理</span></a>
-                    </li>
-                    <li><a class="waves-effect waves-dark" href="<%=basePath%>/views?pageName=defManagement"
-                           aria-expanded="false"><i
-                            class="mdi mdi-help-circle"></i><span class="hide-menu">流程定义管理</span></a>
-                    </li>
+                    <%--<li><a class="waves-effect waves-dark" href="<%=basePath%>/deploy/list"--%>
+                           <%--aria-expanded="false"><i--%>
+                            <%--class="mdi mdi-help-circle"></i><span class="hide-menu">流程部署管理</span></a>--%>
+                    <%--</li>--%>
                 </ul>
                 <div class="text-center m-t-30">
                     <a href="javascript:logout()"
