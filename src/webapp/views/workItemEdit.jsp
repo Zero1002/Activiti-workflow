@@ -21,22 +21,11 @@
 </head>
 <body>
 <div class="page-wrapper">
-    <!-- ============================================================== -->
-    <!-- Container fluid  -->
-    <!-- ============================================================== -->
     <div class="container-fluid">
-        <!-- ============================================================== -->
-        <!-- Bread crumb and right sidebar toggle -->
-        <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-5 col-8 align-self-center">
                 <h3 class="text-themecolor m-b-0 m-t-0">项目详情</h3>
             </div>
-            <%-- 按钮 --%>
-            <%--<div class="col-md-7 col-4 align-self-center">--%>
-            <%--<a href="#" class="btn waves-effect waves-light btn-danger pull-right hidden-sm-down"> Upgrade to--%>
-            <%--Pro</a>--%>
-            <%--</div>--%>
         </div>
         <div class="col-lg-8 col-xlg-9 col-md-7">
             <div class="card">
@@ -52,14 +41,14 @@
                                        class="form-control form-control-line" hidden>
                             </div>
                         </div>
-                        <%--TODO:数组库字段没有流程key的字段--%>
+                        <%-- TODO：列表 --%>
                         <div class="form-group">
                             <label class="col-sm-12">所属流程</label>
                             <div class="col-sm-12">
                                 <select id="flowName" name="flowName" class="form-control form-control-line">
                                     <option value="${workItem.flowName}">${workItem.flowName}</option>
-                                    <option value="TestFlow">TestFlow</option>
                                     <option value="develop">develop</option>
+                                    <option value="BusinessTrip">BusinessTrip</option>
                                 </select>
                             </div>
                         </div>
@@ -70,32 +59,32 @@
                                        class="form-control form-control-line">
                             </div>
                         </div>
-                        <div class="form-group">
+
+                        <%-- TODO:未能自定义提交，jquery不知为何失效 --%>
+                        <div class="form-group" id="extroInfo">
                             <label class="col-md-12">其余信息</label>
                             <c:if test="${workItem.id==null}">
-                                <div class="col-md-12" style="display: inline-flex" id="extro">
+                                <div class="col-md-12" style="display: inline-flex">
                                     <input id="key1" name="key1" type="text" value=""
                                            style="width: 30%;margin-left: 32px;" placeholder="Key"
                                            class="form-control form-control-line">
                                     <input id="value1" name="value1" type="text" value="" style="margin-left: 16px;"
                                            placeholder="Value"
                                            class="form-control form-control-line">
+                                    <div class="col-md-3">
+                                        <button type="button" class="btn btn-effect-ripple btn-success">添加</button>
+                                    </div>
                                 </div>
-                                <div class="col-md-12" style="display: inline-flex" id="extro">
+                                <div class="col-md-12" style="display: inline-flex">
                                     <input id="key2" name="key2" type="text" value=""
                                            style="width: 30%;margin-left: 32px;" placeholder="Key"
                                            class="form-control form-control-line">
                                     <input id="value2" name="value2" type="text" value="" style="margin-left: 16px;"
                                            placeholder="Value"
                                            class="form-control form-control-line">
-                                </div>
-                                <div class="col-md-12" style="display: inline-flex" id="extro">
-                                    <input id="key3" name="key3" type="text" value=""
-                                           style="width: 30%;margin-left: 32px;" placeholder="Key"
-                                           class="form-control form-control-line">
-                                    <input id="value3" name="value3" type="text" value="" style="margin-left: 16px;"
-                                           placeholder="Value"
-                                           class="form-control form-control-line">
+                                    <div class="col-md-3">
+                                        <button type="button" class="btn btn-effect-ripple btn-danger">删除</button>
+                                    </div>
                                 </div>
                             </c:if>
                             <c:if test="${workItem.id>0}">
@@ -108,8 +97,8 @@
                                     </div>
                                 </c:forEach>
                             </c:if>
-
                         </div>
+
                         <div class="form-group">
                             <div class="col-sm-12">
                                 <input type="submit" class="btn btn-success"/>
@@ -127,6 +116,7 @@
 </div>
 
 <script type="text/javascript">
+
     // 启动流程
     function start() {
         if (${workItem.id>0}) {
@@ -147,6 +137,8 @@
             alert("请先保存当前项目");
         }
     }
+
+
 </script>
 </body>
 </html>

@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.jws.WebParam;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -50,11 +51,16 @@ public class processDefController {
      * @throws Exception
      */
     @RequestMapping("/list")
-    public ModelAndView list(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, String s_name, HttpServletResponse response) throws Exception {
+    public ModelAndView list(@RequestParam(required = false) String page,
+                             @RequestParam(required = false) String rows, String s_name,
+                             @RequestParam(required = false) Boolean isAll, HttpServletResponse response) throws Exception {
         ModelAndView mv = new ModelAndView();
         try {
             if (s_name == null) {
                 s_name = "";
+            }
+            if (isAll == null) {
+                isAll = true;
             }
 
             PageBean pageBean = new PageBean();
@@ -75,6 +81,17 @@ public class processDefController {
             jsonConfig.setExcludes(new String[]{"identityLinks", "processDefinition"});
             JSONObject result = new JSONObject();
             JSONArray jsonArray = JSONArray.fromObject(processDefinitionList, jsonConfig);
+            if (!isAll) {
+                // 去重 项目提交时的下拉框
+                List<ProcessDefinition> tmpList = new ArrayList<ProcessDefinition>();
+                List<String> keyName = new ArrayList<String>();
+                for (int i = 0; i < processDefinitionList.size(); i++) {
+                    if (!keyName.contains(processDefinitionList.get(i).getKey())) {
+                        tmpList.add(processDefinitionList.get(i));
+                    }
+                }
+                jsonArray = JSONArray.fromObject(tmpList, jsonConfig);
+            }
             mv.addObject("defLists", jsonArray);
             mv.setViewName("views/defManagement");
             return mv;

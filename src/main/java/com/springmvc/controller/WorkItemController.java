@@ -80,7 +80,7 @@ public class WorkItemController {
     public ResponseObject<Boolean> delete(Integer id) {
         WorkItem record = workItemService.selectByPrimaryKey(id);
         record.setIsDel(true);
-        int rc = workItemService.updateByPrimaryKeySelective(record);
+        int rc = workItemService.updateByPrimaryKey(record);
         return new ResponseObject<Boolean>(rc > 0);
     }
 
