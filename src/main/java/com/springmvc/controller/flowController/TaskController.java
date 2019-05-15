@@ -286,7 +286,7 @@ public class TaskController {
                     Collections.reverse(comments);
                     String processInstanceId = hit.getProcessInstanceId();
                     myTask.setProcessInstanceId(processInstanceId);
-                    // 获取单号
+                    // 获取单号(获取历史流程变量)
                     List<HistoricVariableInstance> hisVarList = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstanceId).list();
                     for (HistoricVariableInstance variable : hisVarList) {
                         // 任务id

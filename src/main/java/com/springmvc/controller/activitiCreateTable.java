@@ -20,8 +20,6 @@ public class activitiCreateTable {
         DeploymentBuilder builder = repositoryService.createDeployment();
         //bpmn文件的名称
         builder.addClasspathResource("flow/DevelopFlow.bpmn");  // 测试流程
-
-
         builder.deploy();
     }
 

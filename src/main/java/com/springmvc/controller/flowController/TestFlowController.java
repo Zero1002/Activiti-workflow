@@ -13,6 +13,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JsonConfig;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
@@ -158,6 +159,8 @@ public class TestFlowController {
                 taskNames.add(nt.getName());
                 if (nt != null) {
                     if (nt.getName().equals("产品上线")) {
+                        Authentication.setAuthenticatedUserId(userId);
+                        taskService.addComment(nt.getId(), processInstacnId, "流程结束,流程结束");
                         taskService.complete(nt.getId());
                     }
                     // 修改状态
@@ -187,109 +190,109 @@ public class TestFlowController {
     @RequestMapping("/showCurrentView")
     public ModelAndView showCurrentView(String processInstanceId, HttpServletResponse response) throws Exception {
         ModelAndView mav = new ModelAndView();
-
-        // 通过任务id查询流程定义
-//        Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
-        List<Task> taskList = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
-        for (Task task : taskList) {
-            String processDefinitionId = task.getProcessDefinitionId(); //获取流程定义Id
-            // 创建流程定义查询
-            // 根据流程定义id查询
+        try {
+            List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery()
+                    .processInstanceId(processInstanceId)
+                    .list();
+            String processDefinitionId = list.get(0).getProcessDefinitionId();
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
             mav.addObject("deploymentId", processDefinition.getDeploymentId()); // 部署id
             mav.addObject("diagramResourceName", processDefinition.getDiagramResourceName()); // 图片资源文件名称
-            // 查看当前活动坐标
-            ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) repositoryService.getProcessDefinition(processDefinitionId);
-            // 根据流程实例id查询活动实例
-            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().
-                    processInstanceId(processInstanceId).singleResult();
-            ActivityImpl activityImpl = processDefinitionEntity.findActivity(processInstance.getActivityId());
-            mav.addObject("x", activityImpl.getX());
-            mav.addObject("y", activityImpl.getY());
-            mav.addObject("width", activityImpl.getWidth());
-            mav.addObject("height", activityImpl.getHeight());
-            try {
-                List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery()
-                        .processInstanceId(processInstanceId)
-                        .list();
-                // 流程逆转，按创建时间降序排列
-                Collections.reverse(list);
-                List<MyTask> tasks = new ArrayList<MyTask>(30);
-                // 查询历史批注表
-                List<Comment> comments = taskService.getProcessInstanceComments(processInstanceId);
-                // 获取单号
-                Integer id = (Integer) taskService.getVariable(task.getId(), "id");
-                for (HistoricTaskInstance ht : list) {
-                    MyTask t = new MyTask();
-                    t.setProcessInstanceId(processInstanceId);
-                    t.setId(id.toString());
-                    t.setFlowName("TestFlow");
-                    // 已处理节点处理人
-                    for (int i = 0; i < comments.size(); i++) {
-                        if (ht.getId().equals(comments.get(i).getTaskId())) {
-                            User user = userService.selectByPrimaryKey(Integer.valueOf(comments.get(i).getUserId()));
-                            t.setCurrentHandleName(user == null ? comments.get(i).getUserId() : user.getLoginName());
-                            t.setOperation(comments.get(i).getFullMessage().split(",")[0]);
-                            t.setDescription(comments.get(i).getFullMessage().split(",").length <= 1 ? null : comments.get(i).getFullMessage().split(",")[1]);
-                        }
-                    }
-                    if (t.getCurrentHandleName() == null || t.getCurrentHandleName() == "") {
-                        // 查询当前节点任务办理 候选组/候选人
-                        List<IdentityLink> identityLinksForTask = taskService.getIdentityLinksForTask(ht.getId());
-                        StringBuilder str = new StringBuilder();
-                        for (int i = 0; i < identityLinksForTask.size(); i++) {
-                            String tmpCandidate = "";
-                            // 显示userId
-                            if (identityLinksForTask.get(i).getUserId() != null) {
-                                tmpCandidate = identityLinksForTask.get(i).getUserId();
-                                User user = userService.selectByPrimaryKey(Integer.valueOf(tmpCandidate));
-                                tmpCandidate = user == null ? tmpCandidate : user.getLoginName();
-                            }
-                            if (identityLinksForTask.get(i).getGroupId() != null) {
-                                Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
-                                Matcher m = p.matcher(identityLinksForTask.get(i).getGroupId());
-                                if (m.find()) {
-                                    tmpCandidate = identityLinksForTask.get(i).getGroupId();
-                                } else {
-                                    Role role = roleService.selectByPrimaryKey(Integer.valueOf(identityLinksForTask.get(i).getGroupId()));
-                                    tmpCandidate = role.getRoleName();
-                                }
-                            }
-                            if (tmpCandidate != null && tmpCandidate != "") {
-                                str.append(" " + tmpCandidate);
-                            }
-                        }
-                        t.setCurrentHandleName(str.toString().trim());
-                    }
-                    t.setTaskId(ht.getId());
-                    t.setTaskName(ht.getName());
-                    t.setCreateTime(ht.getCreateTime());
-                    t.setEndTime(ht.getEndTime());
-                    // 查询定时任务获取到期时间
-                    Job job = managementService.createJobQuery().processInstanceId(processInstanceId).singleResult();
-                    t.setExpectTime(job == null ? null : job.getDuedate());
-                    tasks.add(t);
+            // 流程逆转，按创建时间降序排列
+            Collections.reverse(list);
+            List<MyTask> tasks = new ArrayList<MyTask>(30);
+            // 查询历史批注表
+            List<Comment> comments = taskService.getProcessInstanceComments(processInstanceId);
+            // 获取单号(根据流程实例id获取历史流程变量)
+            String id = "";
+            List<HistoricVariableInstance> hisVarList = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstanceId).list();
+            for (HistoricVariableInstance variable : hisVarList) {
+                // 任务id
+                if (variable.getVariableName().equals("id")) {
+                    id = String.valueOf(variable.getValue());
                 }
-                // 按集合createTime降序排列
-                Collections.sort(tasks, new Comparator() {
-                    public int compare(Object o1, Object o2) {
-                        MyTask task1 = (MyTask) o1;
-                        MyTask task2 = (MyTask) o2;
-                        int flag = task2.getCreateTime().compareTo(task1.getCreateTime());
-                        return flag;
-                    }
-                });
-                JsonConfig jsonConfig = new JsonConfig();
-                jsonConfig.registerJsonValueProcessor(Date.class, new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
-                JSONArray jsonArray = JSONArray.fromObject(tasks, jsonConfig);
-                mav.addObject("taskList", jsonArray);
-            } catch (Exception e) {
-                System.out.println("查询出错：" + e.getMessage());
             }
+            for (HistoricTaskInstance ht : list) {
+                MyTask t = new MyTask();
+                t.setProcessInstanceId(processInstanceId);
+                t.setId(id);
+                t.setFlowName("TestFlow");
+                // 已处理节点处理人
+                for (int i = 0; i < comments.size(); i++) {
+                    if (ht.getId().equals(comments.get(i).getTaskId())) {
+                        User user = userService.selectByPrimaryKey(Integer.valueOf(comments.get(i).getUserId()));
+                        t.setCurrentHandleName(user == null ? comments.get(i).getUserId() : user.getLoginName());
+                        t.setOperation(comments.get(i).getFullMessage().split(",")[0]);
+                        t.setDescription(comments.get(i).getFullMessage().split(",").length <= 1 ? null : comments.get(i).getFullMessage().split(",")[1]);
+                    }
+                }
+                if (t.getCurrentHandleName() == null || t.getCurrentHandleName() == "") {
+                    // 查询当前节点任务办理 候选组/候选人
+                    List<IdentityLink> identityLinksForTask = taskService.getIdentityLinksForTask(ht.getId());
+                    StringBuilder str = new StringBuilder();
+                    for (int i = 0; i < identityLinksForTask.size(); i++) {
+                        String tmpCandidate = "";
+                        // 显示userId
+                        if (identityLinksForTask.get(i).getUserId() != null) {
+                            tmpCandidate = identityLinksForTask.get(i).getUserId();
+                            User user = userService.selectByPrimaryKey(Integer.valueOf(tmpCandidate));
+                            tmpCandidate = user == null ? tmpCandidate : user.getLoginName();
+                        }
+                        if (identityLinksForTask.get(i).getGroupId() != null) {
+                            Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+                            Matcher m = p.matcher(identityLinksForTask.get(i).getGroupId());
+                            if (m.find()) {
+                                tmpCandidate = identityLinksForTask.get(i).getGroupId();
+                            } else {
+                                Role role = roleService.selectByPrimaryKey(Integer.valueOf(identityLinksForTask.get(i).getGroupId()));
+                                tmpCandidate = role.getRoleName();
+                            }
+                        }
+                        if (tmpCandidate != null && tmpCandidate != "") {
+                            str.append(" " + tmpCandidate);
+                        }
+                    }
+                    t.setCurrentHandleName(str.toString().trim());
+                }
+                t.setTaskId(ht.getId());
+                t.setTaskName(ht.getName());
+                t.setCreateTime(ht.getCreateTime());
+                t.setEndTime(ht.getEndTime());
+                // 查询定时任务获取到期时间
+                Job job = managementService.createJobQuery().processInstanceId(processInstanceId).singleResult();
+                t.setExpectTime(job == null ? null : job.getDuedate());
+                tasks.add(t);
+            }
+            // 按集合createTime降序排列
+            Collections.sort(tasks, new Comparator() {
+                public int compare(Object o1, Object o2) {
+                    MyTask task1 = (MyTask) o1;
+                    MyTask task2 = (MyTask) o2;
+                    int flag = task2.getCreateTime().compareTo(task1.getCreateTime());
+                    return flag;
+                }
+            });
+            JsonConfig jsonConfig = new JsonConfig();
+            jsonConfig.registerJsonValueProcessor(Date.class, new DateJsonValueProcessor("yyyy-MM-dd HH:mm:ss"));
+            JSONArray jsonArray = JSONArray.fromObject(tasks, jsonConfig);
+            mav.addObject("taskList", jsonArray);
+        } catch (Exception e) {
+            System.out.println("查询出错：" + e.getMessage());
         }
         mav.setViewName("views/flowView");
         return mav;
     }
+
+//    // 查看当前活动坐标
+//    ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) repositoryService.getProcessDefinition(processDefinitionId);
+//    // 根据流程实例id查询活动实例
+//    ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().
+//            processInstanceId(processInstanceId).singleResult();
+//    ActivityImpl activityImpl = processDefinitionEntity.findActivity(processInstance.getActivityId());
+//            mav.addObject("x", activityImpl.getX());
+//                    mav.addObject("y", activityImpl.getY());
+//                    mav.addObject("width", activityImpl.getWidth());
+//                    mav.addObject("height", activityImpl.getHeight());
 
     /**
      * 查看流程图
